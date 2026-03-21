@@ -2,8 +2,7 @@ import { z } from "zod";
 
 const imagePathSchema = z
   .string()
-  .min(1, "Image is required")
-  .refine((value) => value.startsWith("/uploads/"), "Image must be an uploaded file path");
+  .min(1, "Image is required");
 
 export const bookingFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -53,6 +52,7 @@ export const bookingSubmissionSchema = z.object({
     facePhoto: imagePathSchema,
     bodyPhoto: imagePathSchema,
   }),
+  interview: z.boolean().default(false), // Added interview field as boolean with default
 });
 
 export type BookingSubmissionInput = z.infer<typeof bookingSubmissionSchema>;

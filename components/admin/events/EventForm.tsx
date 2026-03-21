@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -6,12 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Calendar, Clock, Users, Euro, Image as ImageIcon, CheckCircle, Globe, Layout, ShieldCheck } from "lucide-react";
 import DateTimePicker from "@/components/admin/form/DateTimePicker";
 import PremiumSelect from "@/components/admin/form/PremiumSelect";
 import TimePicker from "@/components/admin/form/TimePicker";
 import RichTextEditor from "./RichTextEditor";
 import ImageUploader from "./ImageUploader";
+import Badge from "@/components/admin/Badge";
+import Card from "@/components/admin/Card";
+import Tabs from "@/components/admin/Tabs";
+import { cn } from "@/lib/utils";
 
 const combineEventDateTime = (date?: string, time?: string) => {
   if (!date || !time) return null;
@@ -141,22 +145,9 @@ const formatDateTime = (value: string | Date) => {
   return toDateTimeFieldValue(date);
 };
 
-const formatSuggestionDateTime = (value: string) => {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString([], {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-};
-
 export default function EventForm({ initialData, eventId }: EventFormProps) {
   const router = useRouter();
-  const [activeLanguage, setActiveLanguage] = useState<"en" | "hr">("en");
+  const [activeLanguage, setActiveLanguage] = useState<string>("en");
   const [appliedSuggestion, setAppliedSuggestion] = useState(false);
   const formMode = eventId ? "Update" : "Create";
 
@@ -200,22 +191,13 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
     const suggestion = getSuggestedBookingDeadline(eventDate, eventTime);
     return suggestion ? toDateTimeFieldValue(suggestion) : null;
   }, [eventDate, eventTime]);
-  const { setValue, trigger } = form;
+  
+  const { setValue, trigger, formState: { errors, isSubmitting, isValid } } = form;
 
   useEffect(() => {
     if (!eventDate && !eventTime && !bookingDeadline) return;
     void trigger(["date", "time", "bookingDeadline"]);
   }, [bookingDeadline, eventDate, eventTime, trigger]);
-
-  useEffect(() => {
-    if (!appliedSuggestion) return;
-
-    const timeoutId = window.setTimeout(() => {
-      setAppliedSuggestion(false);
-    }, 1200);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [appliedSuggestion]);
 
   const onSubmit = async (values: EventFormValues) => {
     const payload = {
@@ -243,108 +225,108 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
     }
   };
 
-  const langKey = activeLanguage;
-  const cardClass = "obsidian-panel relative overflow-hidden rounded-[34px] p-6 md:p-8 lg:p-9";
-  const fieldLabelClass = "text-[11px] uppercase tracking-[0.28em] text-white/40";
-  const inputClass = "obsidian-input min-h-[56px] w-full px-4 py-3 text-[15px]";
-  const panelEyebrowClass = "text-[11px] uppercase tracking-[0.32em] text-[#F2CA50]/55";
-  const panelTitleClass = "font-serif text-[2rem] tracking-[-0.04em] text-[#f4edd9] md:text-[2.2rem]";
+  const langKey = activeLanguage as "en" | "hr";
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="relative space-y-14">
-      <div className="pointer-events-none absolute inset-x-0 top-24 h-80 bg-[radial-gradient(circle_at_20%_20%,rgba(242,202,80,0.08),transparent_34%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_26%)]" />
-      <section className="obsidian-panel relative overflow-hidden rounded-[36px] px-6 py-8 md:px-9 md:py-10 xl:mr-6">
-        <div className="absolute -right-8 top-4 h-32 w-32 rounded-full bg-[#F2CA50]/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-24 w-40 bg-[linear-gradient(90deg,rgba(242,202,80,0.08),transparent)]" />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl space-y-3">
-            <p className={panelEyebrowClass}>{formMode} Experience</p>
-            <div className="space-y-2">
-              <h2 className="font-serif text-[2.6rem] leading-[0.96] tracking-[-0.05em] text-[#f4edd9] md:text-[3.9rem]">
-                Event Curation Suite
-              </h2>
-              <p className="max-w-xl text-[15px] leading-8 text-white/58 md:text-base">
-                Shape every detail of the evening with a rich editorial layout, polished scheduling, and translation-aware content.
-              </p>
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:min-w-[420px] xl:translate-y-5">
-            <div className="obsidian-surface rounded-[26px] px-5 py-5 sm:col-span-2">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/35">Signature</p>
-              <p className="mt-2 max-w-sm text-sm leading-7 text-[#f4edd9]">
-                A luxury event workspace for editorial content, polished pricing, and precise release timing.
-              </p>
-            </div>
-            <div className="obsidian-surface rounded-[24px] px-4 py-4">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/35">Publishing</p>
-              <p className="mt-2 text-sm text-[#f4edd9]">{form.watch("status") === "published" ? "Ready to go live" : "Refining in draft"}</p>
-            </div>
-            <div className="obsidian-surface rounded-[24px] px-4 py-4">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/35">Language</p>
-              <p className="mt-2 text-sm text-[#f4edd9]">{activeLanguage === "en" ? "English primary" : "Croatian variant"}</p>
-            </div>
-            <div className="obsidian-surface rounded-[24px] px-4 py-4">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/35">Form State</p>
-              <p className="mt-2 text-sm text-[#f4edd9]">{form.formState.isValid ? "Validated" : "Needs attention"}</p>
-            </div>
-          </div>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <Badge label={`${formMode} Mode`} variant="info" />
+          {form.watch("status") === 'published' ? (
+            <Badge label="Live" variant="success" />
+          ) : (
+            <Badge label="Draft" variant="warning" />
+          )}
         </div>
-      </section>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.push("/admin/events")}
+            className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting || !isValid}
+            className="inline-flex items-center gap-2 bg-white text-black px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-white/5"
+          >
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+            {eventId ? "Update Event" : "Create Event"}
+          </button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 gap-10 xl:grid-cols-12">
-        <div className="space-y-10 xl:col-span-7 xl:pr-6">
-          <section className={cardClass}>
-            <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-              <div className="max-w-lg space-y-2">
-                <p className={panelEyebrowClass}>Editorial Details</p>
-                <h3 className={panelTitleClass}>Set the story for the event</h3>
-                <p className="text-sm leading-7 text-white/55">
-                  Use layered content and timing controls to make the event feel intentional from first glance to final booking.
-                </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content Column */}
+        <div className="lg:col-span-2 space-y-8">
+          <Card 
+            title="Editorial Content" 
+            description="Manage multi-lingual presentation and storytelling"
+            headerAction={
+              <Tabs 
+                options={[
+                  { label: 'English', value: 'en' },
+                  { label: 'Croatian', value: 'hr' }
+                ]} 
+                value={activeLanguage}
+                onChange={setActiveLanguage}
+              />
+            }
+          >
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                    Event Title ({activeLanguage.toUpperCase()})
+                  </label>
+                  <input
+                    {...form.register(`translations.${langKey}.title` as const)}
+                    placeholder="e.g. Elite Black Tie Soirée"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-white/20 transition-all outline-none"
+                  />
+                  {errors.translations?.[langKey]?.title && (
+                    <p className="text-xs text-rose-400 mt-1">{errors.translations[langKey].title.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                    Location ({activeLanguage.toUpperCase()})
+                  </label>
+                  <input
+                    {...form.register(`translations.${langKey}.location` as const)}
+                    placeholder="e.g. Hotel Esplanade, Zagreb"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-white/20 transition-all outline-none"
+                  />
+                  {errors.translations?.[langKey]?.location && (
+                    <p className="text-xs text-rose-400 mt-1">{errors.translations[langKey].location.message}</p>
+                  )}
+                </div>
               </div>
-              <div className="obsidian-surface inline-flex w-full max-w-sm flex-wrap gap-2 rounded-[26px] p-2.5 md:translate-x-4">
-                <button
-                  type="button"
-                  onClick={() => setActiveLanguage("en")}
-                  className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.22em] transition ${activeLanguage === "en" ? "obsidian-chip-active" : "obsidian-chip"}`}
-                >
-                  English
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveLanguage("hr")}
-                  className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.22em] transition ${activeLanguage === "hr" ? "obsidian-chip-active" : "obsidian-chip"}`}
-                >
-                  Croatian
-                </button>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  Atmosphere Description
+                </label>
+                <div className="rounded-xl border border-white/10 bg-white/[0.01] overflow-hidden">
+                  <Controller
+                    control={form.control}
+                    name={`translations.${langKey}.description` as const}
+                    render={({ field }) => (
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} />
+                    )}
+                  />
+                </div>
               </div>
             </div>
+          </Card>
 
-            <div className="mt-10 grid gap-x-6 gap-y-6 md:grid-cols-2">
-              <div className="space-y-2 md:translate-y-2">
-                <label className={fieldLabelClass}>Title</label>
-                <input
-                  {...form.register(`translations.${langKey}.title` as const)}
-                  className={inputClass}
-                  placeholder="Elite Speed Dating"
-                />
-                {form.formState.errors.translations?.[langKey]?.title ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.translations?.[langKey]?.title?.message}</p>
-                ) : null}
-              </div>
+          <Card title="Scheduling & Logistics" description="Define the event timeline and capacity">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className={fieldLabelClass}>Location</label>
-                <input
-                  {...form.register(`translations.${langKey}.location` as const)}
-                  className={inputClass}
-                  placeholder="Zagreb, Croatia"
-                />
-                {form.formState.errors.translations?.[langKey]?.location ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.translations?.[langKey]?.location?.message}</p>
-                ) : null}
-              </div>
-              <div className="space-y-2">
-                <label className={fieldLabelClass}>Event Date</label>
+                <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  <Calendar className="h-3 w-3 text-white/40" />
+                  Event Date
+                </label>
                 <Controller
                   control={form.control}
                   name="date"
@@ -353,231 +335,172 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                       mode="date"
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder="Select event date"
+                      placeholder="Select date"
                       disablePast
                     />
                   )}
                 />
-                {form.formState.errors.date ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.date.message}</p>
-                ) : null}
+                {errors.date && <p className="text-xs text-rose-400">{errors.date.message}</p>}
               </div>
-              <div className="space-y-2 md:translate-y-3">
-                <label className={fieldLabelClass}>Event Time</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  <Clock className="h-3 w-3 text-white/40" />
+                  Event Time
+                </label>
                 <Controller
                   control={form.control}
                   name="time"
                   render={({ field }) => <TimePicker value={field.value} onChange={field.onChange} />}
                 />
-                {form.formState.errors.time ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.time.message}</p>
-                ) : null}
+                {errors.time && <p className="text-xs text-rose-400">{errors.time.message}</p>}
               </div>
               <div className="space-y-2">
-                <label className={fieldLabelClass}>Event Capacity</label>
+                <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  <Users className="h-3 w-3 text-white/40" />
+                  Capacity (Guests)
+                </label>
                 <input
                   type="number"
                   min={1}
                   {...form.register("capacity", { valueAsNumber: true })}
-                  className={inputClass}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-white/20 transition-all outline-none"
                 />
-                {form.formState.errors.capacity ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.capacity.message}</p>
-                ) : null}
+                {errors.capacity && <p className="text-xs text-rose-400">{errors.capacity.message}</p>}
               </div>
-              <div className="space-y-2 md:-translate-y-2">
-                <label className={fieldLabelClass}>Booking Date Time</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  <ShieldCheck className="h-3 w-3 text-rose-400/60" />
+                  Booking Deadline
+                </label>
                 <Controller
                   control={form.control}
                   name="bookingDeadline"
-                  render={({ field }) => {
-                    const showSuggestion = !field.value && !!suggestedBookingDeadline;
-
-                    return (
-                      <div className="space-y-3">
-                        <DateTimePicker
-                          mode="datetime"
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Select booking close time"
-                          disablePast
-                          helperText="Booking closes before the event starts"
-                          maxDateTime={eventStart ? new Date(eventStart.getTime() - 60 * 1000) : null}
-                          minDateTime={new Date()}
-                        />
-                        {showSuggestion ? (
-                          <div
-                            className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-sm transition-all duration-300 ${
-                              appliedSuggestion ? "translate-x-1 text-[#f7db88]" : "text-[#F2CA50]/72"
-                            }`}
-                          >
-                            <span className="text-white/42">Suggested:</span>
-                            <span>{formatSuggestionDateTime(suggestedBookingDeadline)}</span>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setValue("bookingDeadline", suggestedBookingDeadline, {
-                                  shouldDirty: true,
-                                  shouldTouch: true,
-                                  shouldValidate: true,
-                                });
-                                setAppliedSuggestion(true);
-                              }}
-                              className="ml-1 text-xs uppercase tracking-[0.22em] text-[#f4edd9]/72 transition hover:text-[#fff3d0] focus:outline-none"
-                            >
-                              {appliedSuggestion ? "Applied" : "Apply"}
-                            </button>
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <div className="space-y-2">
+                      <DateTimePicker
+                        mode="datetime"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Booking close time"
+                        disablePast
+                        maxDateTime={eventStart ? new Date(eventStart.getTime() - 60 * 1000) : null}
+                      />
+                      {!field.value && suggestedBookingDeadline && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setValue("bookingDeadline", suggestedBookingDeadline, { shouldValidate: true });
+                            setAppliedSuggestion(true);
+                          }}
+                          className={cn(
+                            "w-full px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-dashed rounded-lg transition-all",
+                            appliedSuggestion 
+                              ? "border-emerald-500/50 text-emerald-400/80 bg-emerald-500/5" 
+                              : "border-white/10 text-white/30 hover:border-white/20 hover:text-white/50"
+                          )}
+                        >
+                          {appliedSuggestion ? "Suggestion Applied" : "Use Suggested Timing"}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 />
-                {form.formState.errors.bookingDeadline ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.bookingDeadline.message}</p>
-                ) : null}
+                {errors.bookingDeadline && <p className="text-xs text-rose-400">{errors.bookingDeadline.message}</p>}
               </div>
             </div>
-          </section>
-
-          <section className={`${cardClass} xl:translate-x-10`}>
-            <div className="absolute right-0 top-10 h-28 w-28 rounded-full bg-[#F2CA50]/5 blur-3xl" />
-            <div className="space-y-2">
-              <p className={panelEyebrowClass}>Monetisation</p>
-              <h3 className={panelTitleClass}>Price the experience with clarity</h3>
-            </div>
-            <div className="mt-8 grid gap-x-6 gap-y-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className={fieldLabelClass}>Event Price Male</label>
-                <input
-                  type="number"
-                  min={0}
-                  {...form.register("priceMale", { valueAsNumber: true })}
-                  className={inputClass}
-                />
-                {form.formState.errors.priceMale ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.priceMale.message}</p>
-                ) : null}
-              </div>
-              <div className="space-y-2 md:translate-y-3">
-                <label className={fieldLabelClass}>Event Price Female</label>
-                <input
-                  type="number"
-                  min={0}
-                  {...form.register("priceFemale", { valueAsNumber: true })}
-                  className={inputClass}
-                />
-                {form.formState.errors.priceFemale ? (
-                  <p className="text-xs text-rose-300">{form.formState.errors.priceFemale.message}</p>
-                ) : null}
-              </div>
-            </div>
-          </section>
-
-          <section className={`${cardClass} md:translate-x-4 xl:-translate-x-3`}>
-            <div className="absolute bottom-2 left-3 h-24 w-24 rounded-full bg-white/5 blur-3xl" />
-            <div className="space-y-2">
-              <p className={panelEyebrowClass}>Narrative</p>
-              <h3 className={panelTitleClass}>Describe the atmosphere</h3>
-            </div>
-            <div className="mt-8">
-              <Controller
-                control={form.control}
-                name={`translations.${langKey}.description` as const}
-                render={({ field }) => <RichTextEditor value={field.value || ""} onChange={field.onChange} />}
-              />
-            </div>
-          </section>
+          </Card>
         </div>
 
-        <aside className="space-y-8 xl:col-span-5 xl:pt-16">
-          <section className={`${cardClass} xl:sticky xl:top-24 xl:-ml-4`}>
-            <div className="absolute -left-10 top-14 h-32 w-32 rounded-full bg-[#F2CA50]/6 blur-3xl" />
-            <div className="space-y-8">
+        {/* Sidebar Column */}
+        <div className="space-y-8 lg:sticky lg:top-10 self-start">
+          <Card title="Publishing Status">
+            <div className="space-y-6">
               <div className="space-y-2">
-                <p className={panelEyebrowClass}>Release Control</p>
-                <h3 className={panelTitleClass}>Finalize the presentation</h3>
+                <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">Status</label>
+                <Controller
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <PremiumSelect
+                      value={field.value}
+                      onChange={(val) => field.onChange(val)}
+                      placeholder="Select status"
+                      options={[
+                        { label: "Draft - Preview Only", value: "draft" },
+                        { label: "Published - Live", value: "published" },
+                      ]}
+                    />
+                  )}
+                />
               </div>
+              
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                <p className="text-xs leading-relaxed text-white/40">
+                  Published events are immediately visible to members for booking. Ensure all translations are complete.
+                </p>
+              </div>
+            </div>
+          </Card>
 
-              <div className="obsidian-surface rounded-[28px] p-6">
-                <label className={fieldLabelClass}>Status</label>
-                <div className="mt-3">
-                  <Controller
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <PremiumSelect
-                        value={field.value}
-                        onChange={(nextValue) => field.onChange(nextValue as "draft" | "published")}
-                        placeholder="Select status"
-                        options={[
-                          { label: "Draft", value: "draft" },
-                          { label: "Published", value: "published" },
-                        ]}
-                      />
-                    )}
+          <Card title="Monetization">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  <Euro className="h-3 w-3 text-sky-400/60" />
+                  Male Price
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={0}
+                    {...form.register("priceMale", { valueAsNumber: true })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-sm outline-none focus:ring-1 focus:ring-white/20 transition-all"
                   />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold text-xs">€</span>
                 </div>
               </div>
-
-              <div className="obsidian-surface rounded-[28px] p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <p className={fieldLabelClass}>Featured Image</p>
-                    <p className="text-sm leading-7 text-white/50">
-                      Build anticipation with a striking image that sets the tone before guests ever click through.
-                    </p>
-                  </div>
-                  <span className="obsidian-chip rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.22em]">Visual</span>
-                </div>
-                <div className="mt-5">
-                  <Controller
-                    control={form.control}
-                    name="featuredImage"
-                    render={({ field }) => (
-                      <div className="space-y-4">
-                        <ImageUploader value={field.value} onChange={field.onChange} />
-                        <input
-                          type="text"
-                          placeholder="Or paste image URL"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          className={inputClass}
-                        />
-                      </div>
-                    )}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                  <Euro className="h-3 w-3 text-rose-400/60" />
+                  Female Price
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={0}
+                    {...form.register("priceFemale", { valueAsNumber: true })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-sm outline-none focus:ring-1 focus:ring-white/20 transition-all"
                   />
-                </div>
-              </div>
-
-              <div className="obsidian-surface rounded-[28px] p-6">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => router.push("/admin/events")}
-                    className="obsidian-ghost-button rounded-[1.1rem] px-5 py-4 text-sm font-medium uppercase tracking-[0.22em]"
-                  >
-                    Back to List
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={form.formState.isSubmitting || !form.formState.isValid}
-                    className="obsidian-primary-button rounded-[1.1rem] px-5 py-4 text-sm font-bold uppercase tracking-[0.22em] disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    {form.formState.isSubmitting ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Saving...
-                      </span>
-                    ) : (
-                      "Save Event"
-                    )}
-                  </button>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold text-xs">€</span>
                 </div>
               </div>
             </div>
-          </section>
-        </aside>
+          </Card>
+
+          <Card title="Visual Assets">
+            <div className="space-y-4">
+              <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
+                <ImageIcon className="h-3 w-3 text-white/40" />
+                Featured Image
+              </label>
+              <Controller
+                control={form.control}
+                name="featuredImage"
+                render={({ field }) => (
+                  <div className="space-y-4">
+                    <ImageUploader value={field.value} onChange={field.onChange} />
+                    <input
+                      placeholder="Or paste image URL"
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs outline-none focus:ring-1 focus:ring-white/20 transition-all"
+                    />
+                  </div>
+                )}
+              />
+            </div>
+          </Card>
+        </div>
       </div>
     </form>
   );

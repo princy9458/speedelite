@@ -101,7 +101,7 @@ export const en = {
     },
   },
   apply: {
-    steps: ["Event", "Form", "Payment", "Confirmation"],
+    steps: ["Event", "Form", "Booking", "Verification", "Completion"],
     formTitle: "Application Form",
     stepLabel: "Step 2",
     eventSummaryTitle: "Selected Event",
@@ -127,12 +127,13 @@ export const en = {
     validation: {
       required: "This field is required.",
       email: "Please enter a valid email address.",
-      mobile: "Please enter digits only.",
+      mobile: "Please enter a valid mobile number (+, spaces allowed).",
       height: "Please enter a numeric height.",
       photoRequired: "Please upload this photo.",
       photoType: "Only JPG, JPEG, and PNG files are allowed.",
       photoSize: "File must be 2MB or smaller.",
       terms: "You must accept the terms.",
+      fixErrors: "Please fill in all required fields and upload photos.",
     },
     placeholders: {
       firstName: "Enter first name",
@@ -227,7 +228,8 @@ export const en = {
       title: "Event not selected yet",
       description: "Go back and choose an event before continuing.",
     },
-    paymentTitle: "Payment",
+    paymentTitle: "Booking",
+    paymentDescription: "In case of cancellation: up to 48 hours before the event, the amount paid is fully refunded. Cancellation in the last 48 hours is non-refundable. In case you are not selected for participation, we refund the full amount paid.",
     paymentCardNumber: "Card Number",
     paymentExpiry: "Expiry",
     paymentCvc: "CVC",

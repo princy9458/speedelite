@@ -101,7 +101,7 @@ export const hr = {
     },
   },
   apply: {
-    steps: ["Event", "Forma", "Placanje", "Potvrda"],
+    steps: ["Termin", "Forma", "Rezervacija", "Verifikacija", "Završetak"],
     formTitle: "Prijavni obrazac",
     stepLabel: "Korak 2",
     eventSummaryTitle: "Odabrani event",
@@ -127,12 +127,13 @@ export const hr = {
     validation: {
       required: "Ovo polje je obavezno.",
       email: "Unesite ispravnu email adresu.",
-      mobile: "Unesite samo znamenke.",
+      mobile: "Unesite ispravan broj mobitela (+, razmaci dopusteni).",
       height: "Unesite brojcanu visinu.",
       photoRequired: "Prenesite ovu fotografiju.",
       photoType: "Dozvoljene su samo JPG, JPEG i PNG datoteke.",
       photoSize: "Datoteka mora biti manja od 2MB.",
       terms: "Morate prihvatiti uvjete.",
+      fixErrors: "Molimo ispunite sva obavezna polja i prenesite fotografije.",
     },
     placeholders: {
       firstName: "Unesite ime",
@@ -227,7 +228,8 @@ export const hr = {
       title: "Event jos nije odabran",
       description: "Vratite se korak natrag i odaberite event prije nastavka.",
     },
-    paymentTitle: "Placanje",
+    paymentTitle: "Rezervacija",
+    paymentDescription: "U slučaju otkazivanja: do 48h prije termina, u potpunosti se vraća uplaćeni iznos. Otkazivanjem u zadnjih 48h nema povrata novca. U slučaju da niste odabrani za sudjelovanje, u potpunosti vraćamo uplaćeni iznos.",
     paymentCardNumber: "Broj kartice",
     paymentExpiry: "Vrijedi do",
     paymentCvc: "CVC",
