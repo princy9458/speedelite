@@ -219,6 +219,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
         return;
       }
       toast.success(eventId ? "Event updated" : "Event created");
+      router.refresh();
       router.push("/admin/events");
     } catch {
       toast.error("Something went wrong");

@@ -15,8 +15,15 @@ if (!cached) {
 export async function connectDB() {
   if (cached.conn) return cached.conn;
 
+  if (MONGODB_URI.includes("clusterprince.jcdgire.mongodb.net")) {
+    throw new Error("CRITICAL: Attempted to connect to forbidden cluster 'clusterprince'. Project must only use 'Speed Dating DB'.");
+  }
+
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => mongoose);
+    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
+      console.log("Connected to Speed Dating DB");
+      return mongoose;
+    });
   }
 
   cached.conn = await cached.promise;
