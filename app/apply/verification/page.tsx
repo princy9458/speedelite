@@ -1,115 +1,9 @@
 "use client";
 
-<<<<<<< HEAD
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2, ShieldCheck, CheckCircle } from "lucide-react";
-import ProgressSteps from "@/components/apply/ProgressSteps";
-import EventSummaryCard from "@/components/apply/EventSummaryCard";
-import { getDictionary } from "@/lib/i18n";
-import { useBookingStore } from "@/lib/stores/bookingStore";
-import { motion } from "motion/react";
-
-export default function VerificationPage() {
-  const router = useRouter();
-  const { lang, eventId, role, confirmation } = useBookingStore();
-  const [event, setEvent] = useState<any>(null);
-  const [status, setStatus] = useState<"verifying" | "success">("verifying");
-  const t = getDictionary(lang);
-
-  useEffect(() => {
-    if (!eventId) {
-      router.push("/apply/select-event");
-      return;
-    }
-
-    fetch(`/api/events/${eventId}`)
-      .then((res) => res.json())
-      .then(setEvent);
-
-    // Simulate verification process
-    const timer = setTimeout(() => {
-      setStatus("success");
-      const redirectTimer = setTimeout(() => {
-        router.push("/apply/confirmation");
-      }, 2000);
-      return () => clearTimeout(redirectTimer);
-    }, 3500);
-
-    return () => clearTimeout(timer);
-  }, [eventId, router]);
-
-  return (
-    <div className="space-y-10">
-      <ProgressSteps steps={t.apply.steps} currentStep={4} />
-
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="rounded-[32px] bg-[#1a1a1a]/40 backdrop-blur-3xl p-12 space-y-12 text-center flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden border-t border-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
-          {/* Ambient Glow */}
-          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.12),transparent_70%)] pointer-events-none" />
-
-          <div className="relative space-y-3">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#D4AF37] font-bold">Step 4</p>
-            <h1 className="text-4xl font-serif text-white">{t.apply.steps[3]}</h1>
-          </div>
-
-          <div className="relative flex flex-col items-center max-w-sm mx-auto">
-            {status === "verifying" ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center space-y-8"
-              >
-                <div className="relative">
-                  <div className="absolute inset-0 animate-ping rounded-full bg-[#d5ad5b]/20" />
-                  <div className="relative h-20 w-20 rounded-full border border-white/10 bg-black/40 flex items-center justify-center shadow-[0_0_40px_rgba(213,173,91,0.15)]">
-                    <Loader2 className="h-8 w-8 animate-spin text-[#d5ad5b]" />
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <h2 className="text-xl font-medium text-white/90">Curating your experience</h2>
-                  <p className="text-sm text-white/50 leading-relaxed">
-                    We are verifying your booking details and securing your spot in this exclusive event.
-                  </p>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                className="flex flex-col items-center space-y-8"
-              >
-                <div className="h-20 w-20 rounded-full bg-[#d5ad5b] flex items-center justify-center shadow-[0_0_50px_rgba(213,173,91,0.4)]">
-                  <CheckCircle className="h-10 w-10 text-black stroke-[2.5px]" />
-                </div>
-                <div className="space-y-3">
-                  <h2 className="text-xl font-bold gold-text">Verification Successful</h2>
-                  <p className="text-sm text-white/60">
-                    Your spot is secure. Redirecting to your confirmation...
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          <div className="pt-4">
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold">
-              <ShieldCheck className="h-4 w-4" />
-              Secure Verification System
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:pt-4">
-          <div className="lg:sticky lg:top-[100px]">
-            <EventSummaryCard lang={lang} role={role} event={event} />
-          </div>
-        </div>
-      </div>
-=======
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, Calendar, Clock, Globe, Video, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import ProgressSteps from "@/components/apply/ProgressSteps";
 import { getDictionary } from "@/lib/i18n";
 import { useBookingStore } from "@/lib/stores/bookingStore";
@@ -215,84 +109,136 @@ export default function VerificationPage() {
         </div>
       </div>
 
-      {/* Calendar Selection Overlay (Simulated) */}
-      {showCalendar && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
-          <div className="absolute inset-0 bg-black/80" onClick={() => setShowCalendar(false)} />
+      {/* Premium Booking Modal */}
+      <AnimatePresence>
+        {showCalendar && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-xl">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80" 
+              onClick={() => setShowCalendar(false)} 
+            />
 
-          <div className="relative w-full max-w-[900px] overflow-hidden rounded-[32px] bg-white text-black shadow-2xl">
-            <button
-              onClick={() => setShowCalendar(false)}
-              className="absolute right-6 top-6 rounded-full p-2 text-black/20 hover:bg-black/5 hover:text-black transition"
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="relative w-full max-w-[900px] overflow-hidden rounded-[20px] bg-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/[0.08] flex"
             >
-              <X className="h-6 w-6" />
-            </button>
+              {/* Close Button */}
+              <button
+                onClick={() => setShowCalendar(false)}
+                className="absolute right-6 top-6 z-20 rounded-full p-2 text-white/40 hover:bg-white/5 hover:text-white transition-all duration-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
 
-            <div className="grid md:grid-cols-[320px_1fr]">
-              {/* Left Side: Info */}
-              <div className="border-r border-black/5 bg-[#fafafa] p-10 space-y-8">
-                <div className="flex items-center gap-3 text-black">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black">
-                     <span className="font-serif text-xl font-bold text-white">YY</span>
+              <div className="grid md:grid-cols-[300px_1fr] w-full">
+                {/* Left Side: Premium Info Panel */}
+                <div className="bg-[#0B0B0B] p-12 space-y-10 border-r border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#C9A646,#F6E27A)] p-0.5 shadow-[0_0_20px_rgba(201,166,70,0.3)]">
+                       <div className="w-full h-full bg-black rounded-full flex items-center justify-center">
+                          <span className="font-serif text-xl font-bold text-white tracking-widest">SE</span>
+                       </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-8">
+                    <h3 className="text-3xl font-serif text-white leading-tight">
+                      {lang === "hr" ? "Online video selekcija" : "Online video selection"}
+                    </h3>
+                    <div className="space-y-5">
+                      <div className="flex items-center gap-4 text-white/70">
+                        <Clock className="h-5 w-5 text-[#C9A646]" />
+                        <span className="text-sm font-medium tracking-wide">
+                          {lang === "hr" ? "trajanje 3 min" : "3 min duration"}
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-4 text-white/50">
+                        <Video className="mt-1 h-5 w-5 shrink-0 text-[#C9A646]/60" />
+                        <span className="text-[13px] leading-relaxed">
+                          {lang === "hr" 
+                            ? "Detalji web konferencije bit će dostavljeni nakon potvrde termina." 
+                            : "Web conferencing details provided upon confirmation."}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <h3 className="text-3xl font-bold leading-tight">Online video selekcija</h3>
-                  <div className="space-y-4 text-black/60">
-                    <div className="flex items-center gap-3">
-                      <Clock className="h-5 w-5" />
-                      <span className="font-medium">trajanje 3 min</span>
+                {/* Right Side: Luxury Calendar Panel */}
+                <div className="p-12 bg-[#121212]/50 backdrop-blur-md relative overflow-hidden">
+                  {/* Background Subtle Glow */}
+                  <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#C9A646]/5 rounded-full blur-[100px]" />
+                  
+                  <div className="relative z-10 space-y-10">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xl font-serif text-white">
+                        {lang === "hr" ? "Odaberite datum:" : "Select a Date:"}
+                      </h4>
+                      <div className="flex items-center gap-6">
+                         <button className="text-white/40 hover:text-[#C9A646] transition-colors"><ChevronLeft className="h-5 w-5" /></button>
+                         <span className="text-sm font-bold uppercase tracking-[0.2em] text-white/90">
+                           {lang === "hr" ? "Ožujak 2026" : "March 2026"}
+                         </span>
+                         <button className="text-white/40 hover:text-[#C9A646] transition-colors"><ChevronRight className="h-5 w-5" /></button>
+                      </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Video className="mt-1 h-5 w-5 shrink-0" />
-                      <span className="text-sm">Detalji web konferencije bit će dostavljeni nakon potvrde termina.</span>
+
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 border-b border-white/5 pb-4">
+                        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(d => <div key={d}>{d}</div>)}
+                      </div>
+                      
+                      <div className="grid grid-cols-7 gap-2">
+                        {Array.from({ length: 31 }).map((_, i) => {
+                          const day = i + 1;
+                          const isSelected = day === 26;
+                          const isToday = day === 20;
+                          const isDisabled = day < 20;
+                          
+                          return (
+                            <button
+                              key={i}
+                              disabled={isDisabled}
+                              onClick={() => handleSelectSlot(`2026-03-${day.toString().padStart(2, '0')}`, "17:00")}
+                              className={cn(
+                                "aspect-square rounded-full flex items-center justify-center text-[13px] font-medium transition-all duration-300 relative group",
+                                isDisabled ? "text-white/10 cursor-not-allowed" : 
+                                isSelected ? "bg-[linear-gradient(135deg,#C9A646,#F6E27A)] text-black font-bold scale-110 shadow-[0_0_20px_rgba(201,166,70,0.4)]" :
+                                isToday ? "text-[#C9A646] font-bold bg-[#C9A646]/10 ring-1 ring-[#C9A646]/20" :
+                                "text-white/60 hover:text-white hover:bg-white/5"
+                              )}
+                            >
+                              {day}
+                              {!isDisabled && !isSelected && (
+                                <div className="absolute inset-0 rounded-full bg-[#C9A646]/0 group-hover:bg-[#C9A646]/5 transition-all duration-300" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <button
+                        onClick={() => handleSelectSlot("2026-03-26", "17:00")}
+                        className="bg-[linear-gradient(135deg,#C9A646,#F6E27A)] rounded-full px-10 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] text-black shadow-[0_12px_32px_rgba(201,166,70,0.3)] transition hover:brightness-110 hover:shadow-[0_12px_40px_rgba(201,166,70,0.4)] active:scale-[0.98]"
+                      >
+                        {lang === "hr" ? "Potvrdi termin" : "Confirm Booking"}
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Right Side: Calendar Component */}
-              <div className="p-12">
-                <div className="space-y-8">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-xl font-bold">Odaberite datum:</h4>
-                    <div className="flex items-center gap-2">
-                       <button className="rounded-full p-2 hover:bg-black/5"><ChevronLeft className="h-5 w-5" /></button>
-                       <span className="font-medium">March 2026</span>
-                       <button className="rounded-full p-2 hover:bg-black/5"><ChevronRight className="h-5 w-5" /></button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-7 gap-2 text-center text-sm font-medium text-black/40">
-                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(d => <div key={d} className="py-2">{d}</div>)}
-                    {Array.from({ length: 31 }).map((_, i) => {
-                      const day = i + 1;
-                      const isSelected = day === 26;
-                      const isToday = day === 20;
-                      return (
-                        <button
-                          key={i}
-                          onClick={() => handleSelectSlot(`2026-03-${day.toString().padStart(2, '0')}`, "5:00 PM")}
-                          className={cn(
-                            "aspect-square rounded-full flex items-center justify-center transition-all",
-                            isSelected ? "bg-[#d4af37] text-white font-bold scale-110 shadow-lg" :
-                            isToday ? "bg-black/5 text-black font-bold ring-1 ring-black/10" :
-                            "hover:bg-black/5 text-black/80"
-                          )}
-                        >
-                          {day}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
+        )}
+      </AnimatePresence>
     </div>
   );
 }

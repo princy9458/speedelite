@@ -101,11 +101,7 @@ export const en = {
     },
   },
   apply: {
-<<<<<<< HEAD
     steps: ["Event", "Form", "Reservation", "Verification", "Completion"],
-=======
-    steps: ["Event", "Form", "Booking", "Verification", "Completion"],
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     formTitle: "Application Form",
     stepLabel: "Step 2",
     eventSummaryTitle: "Selected Event",
@@ -131,23 +127,15 @@ export const en = {
     validation: {
       required: "This field is required.",
       email: "Please enter a valid email address.",
-<<<<<<< HEAD
-      mobile: "Please enter a valid mobile number.",
-=======
       mobile: "Please enter a valid mobile number (+, spaces allowed).",
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
       height: "Please enter a numeric height.",
       interestRequired: "Select at least one interest.",
       photoRequired: "Please upload this photo.",
       photoType: "Only JPG, JPEG, and PNG files are allowed.",
       photoSize: "File must be 2MB or smaller.",
-<<<<<<< HEAD
-      terms: "You must accept the Terms & Conditions to proceed.",
-      completeRequired: "Please complete all required fields highlighted in red.",
-=======
       terms: "You must accept the terms.",
+      completeRequired: "Please complete all required fields highlighted in red.",
       fixErrors: "Please fill in all required fields and upload photos.",
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     },
     checkFormErrors: "Please correct the errors in the form before proceeding.",
     placeholders: {

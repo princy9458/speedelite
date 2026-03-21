@@ -22,46 +22,58 @@ export default function ApplyHeader() {
   };
 
   return (
-    <header className="relative z-50 bg-[#131313]/40 backdrop-blur-2xl transition-all duration-500">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 font-medium">
-        <Link href="/" className="group flex items-center gap-3">
-          <div className="relative flex items-center gap-2.5">
-            <Image
-              src="/website/se_logo.png"
-              alt=""
-              width={40}
-              height={40}
-              className="h-8 w-auto object-contain brightness-0 invert opacity-90 group-hover:scale-110 transition-transform duration-500"
-              priority
-            />
-            <span className="text-2xl font-serif tracking-tight bg-gradient-to-br from-[#D4AF37] via-[#F2CA50] to-[#D4AF37] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(212,175,55,0.3)] group-hover:drop-shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-500">
-              {t.common.brand}
-            </span>
-          </div>
-        </Link>
-        
-        <div className="flex items-center gap-8">
-          <span className="hidden text-[10px] uppercase tracking-[0.4em] text-[#E5E2E1]/40 font-bold sm:block">
+    <header className="relative z-50 py-8" style={{ background: "radial-gradient(circle at center, rgba(212, 175, 55, 0.15), transparent 60%)" }}>
+      <div className="mx-auto max-w-7xl px-6 relative flex items-center justify-between">
+        {/* Left Spacing for balance (if needed) or App Text */}
+        <div className="hidden sm:block w-32">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-white/30 font-bold">
             {t.common.application}
           </span>
-          
-          <div className="flex items-center gap-1.5 rounded-full bg-white/5 p-1 px-1.5">
-            {(["hr", "en"] as AppLanguage[]).map((code) => (
-              <button
-                key={code}
-                type="button"
-                onClick={() => switchLanguage(code)}
-                className={cn(
-                  "rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.25em] font-bold transition-all duration-500",
-                  lang === code 
-                    ? "bg-[#D4AF37] text-black shadow-[0_0_15px_rgba(212,175,55,0.3)]" 
-                    : "text-[#E5E2E1]/40 hover:text-[#E5E2E1] hover:bg-white/5"
-                )}
-              >
-                {code}
-              </button>
-            ))}
-          </div>
+        </div>
+
+        {/* Logo Group */}
+        <div className="absolute left-1/2 -translate-x-1/2 w-full flex justify-center pt-[12px]">
+          <Link href="/" className="flex items-center gap-[12px]">
+            <Image
+              src="/website/se_logo.png"
+              alt="SpeedElite"
+              width={44}
+              height={44}
+              className="object-contain"
+            />
+            
+            {/* TEXT (WHITE ONLY) */}
+            <span 
+              style={{ 
+                fontSize: "30px",
+                fontFamily: "serif",
+                color: "#FFFFFF",
+                fontWeight: 500,
+                letterSpacing: "0.5px"
+              }}
+            >
+              SpeedElite
+            </span>
+          </Link>
+        </div>
+        
+        {/* Language Switcher */}
+        <div className="flex items-center gap-2 rounded-full bg-white/[0.03] p-1 border border-white/5">
+          {(["hr", "en"] as AppLanguage[]).map((code) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => switchLanguage(code)}
+              className={cn(
+                "rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-500",
+                lang === code 
+                  ? "bg-[linear-gradient(135deg,#C9A646,#F6E27A)] text-black shadow-[0_0_15px_rgba(201,166,70,0.4)]" 
+                  : "text-white/30 hover:text-white/60 hover:bg-white/5"
+              )}
+            >
+              {code}
+            </button>
+          ))}
         </div>
       </div>
     </header>

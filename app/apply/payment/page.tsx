@@ -129,13 +129,8 @@ export default function PaymentPage() {
         bookingNumber: data.bookingNumber,
         message: data.message || t.apply.submitSuccessBody,
       });
-<<<<<<< HEAD
-      router.push("/apply/verification");
-=======
-
       setView("success");
       toast.success("Payment Successful!");
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to complete booking");
     } finally {
@@ -148,7 +143,10 @@ export default function PaymentPage() {
       <div className="mx-auto max-w-[1240px] space-y-12 pb-20">
         <ProgressSteps steps={t.apply.steps} currentStep={3} />
         
-        <div className="space-y-4">
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#d4af37]/10 text-[#d4af37] shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+            <Check className="h-10 w-10 stroke-[3px]" />
+          </div>
           <h1 className="text-4xl font-serif text-white">{lang === "hr" ? "Plaćanje uspješno" : "Payment Successful"}</h1>
           <p className="text-white/60">
             {lang === "hr" ? "Uplata je uspješno izvršena. Još jedan korak do završetka prijave." : "Payment has been processed successfully. One more step to complete your application."}
@@ -160,6 +158,7 @@ export default function PaymentPage() {
             <div className="grid md:grid-cols-[1fr_1.2fr]">
               {/* Left Side: Event Block */}
               <div className="relative aspect-square md:aspect-auto">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
                 {event?.featuredImage && (
                   <Image
                     src={event.featuredImage}
@@ -168,8 +167,7 @@ export default function PaymentPage() {
                     className="object-cover"
                   />
                 )}
-                <div className="absolute inset-0 bg-black/40" />
-                <div className="absolute bottom-8 left-8">
+                <div className="absolute bottom-8 left-8 z-20">
                   <h2 className="font-serif text-4xl font-bold text-white mb-4">{eventTitle}</h2>
                   <div className="flex items-center gap-2 text-[#d4af37]">
                     <Calendar className="h-5 w-5" />
@@ -212,10 +210,10 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          <div className="mt-12 flex justify-end">
+          <div className="mt-12 flex justify-center">
              <button
                 onClick={() => router.push("/apply/verification")}
-                className="gold-gradient rounded-xl px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black shadow-[0_12px_32px_rgba(212,175,55,0.2)] transition hover:brightness-110 active:scale-[0.98]"
+                className="gold-gradient rounded-full px-16 py-4 text-xs font-bold uppercase tracking-[0.25em] text-black shadow-[0_16px_36px_rgba(212,175,55,0.3)] transition-all hover:brightness-110 active:scale-[0.98]"
              >
                 {lang === "hr" ? "Sljedeći korak" : "Next Step"}
              </button>
@@ -229,57 +227,6 @@ export default function PaymentPage() {
     <div className="mx-auto max-w-[1240px] space-y-12 pb-20">
       <ProgressSteps steps={t.apply.steps} currentStep={3} />
       
-<<<<<<< HEAD
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="rounded-[32px] bg-[#1a1a1a]/40 backdrop-blur-3xl p-8 space-y-8 border-t border-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#D4AF37] font-bold">Step 3</p>
-            <h1 className="mt-2 text-4xl font-serif text-white">{t.apply.steps[2]}</h1>
-          </div>
-          <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
-            <input
-              value={paymentData.cardNumber}
-              onChange={(e) => updatePayment({ cardNumber: e.target.value })}
-              placeholder={t.apply.paymentCardNumber}
-              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
-              required
-            />
-            <input
-              value={paymentData.expiry}
-              onChange={(e) => updatePayment({ expiry: e.target.value })}
-              placeholder={t.apply.paymentExpiry}
-              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
-              required
-            />
-            <input
-              value={paymentData.cvc}
-              onChange={(e) => updatePayment({ cvc: e.target.value })}
-              placeholder={t.apply.paymentCvc}
-              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
-              required
-            />
-            <input
-              value={paymentData.discountCode}
-              onChange={(e) => updatePayment({ discountCode: e.target.value })}
-              placeholder={t.apply.paymentDiscount}
-              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
-            />
-            <div className="md:col-span-2 flex items-center justify-between border-t border-white/[0.06] pt-6">
-              <span className="text-[#E5E2E1]/40 text-xs uppercase tracking-widest font-bold font-sans">{t.apply.paymentTotal}</span>
-              <span className="text-2xl font-serif text-[#F2CA50] drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]">EUR {amountPaid}</span>
-            </div>
-            <div className="md:col-span-2 flex items-center justify-between gap-6 mt-4">
-              <button
-                type="button"
-                onClick={() => router.push("/apply/form")}
-                className="rounded-[14px] border border-white/12 px-6 py-3.5 text-[11px] uppercase tracking-[0.25em] text-[#E5E2E1]/60 transition-all duration-300 hover:border-[#D4AF37]/40 hover:text-[#F2CA50] hover:bg-white/5"
-              >
-                {t.common.back}
-              </button>
-              <button
-                disabled={isSubmitting}
-                className="rounded-[14px] bg-[linear-gradient(180deg,#D4AF37_0%,#F2CA50_100%)] px-10 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] text-black shadow-[0_16px_32px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(212,175,55,0.3)] hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale disabled:scale-100 flex items-center gap-2"
-=======
       <div className="flex justify-end">
         <button
           onClick={handleAutoFill}
@@ -290,85 +237,100 @@ export default function PaymentPage() {
         </button>
       </div>
 
-      <div className="grid gap-16 lg:grid-cols-[1fr_380px] items-start">
+      <div className="grid gap-10 lg:grid-cols-[1fr_380px] items-start">
         {/* Left Column: Payment Form */}
-        <div className="space-y-10">
-          <h1 className="text-4xl font-serif text-white">{t.apply.paymentTitle}</h1>
+        <div className="space-y-14">
+          <h1 className="text-6xl font-serif text-white tracking-tight">{lang === "hr" ? "Plaćanje" : "Payment"}</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/90">{t.apply.paymentCardNumber}</label>
+          <form onSubmit={handleSubmit} className="space-y-10">
+            <div className="space-y-8">
+              {/* Card Number */}
+              <div className="space-y-4">
+                <label className="text-[11px] uppercase tracking-[0.35em] font-bold text-white/30">{t.apply.paymentCardNumber}</label>
                 <input
                   value={paymentData.cardNumber}
                   onChange={(e) => updatePayment({ cardNumber: e.target.value })}
                   placeholder="1234 1234 1234 1234"
-                  className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
+                  className="w-full h-[52px] rounded-[12px] border border-white/5 bg-white/[0.05] px-6 text-base text-white focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-[#C9A646]/30 transition-all placeholder:text-white/10"
                   required
                 />
-                <div className="flex gap-2 pt-2 opacity-60 grayscale hover:grayscale-0 transition-all">
-                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">VISA</div>
-                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">MC</div>
-                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">AMEX</div>
-                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">MAESTRO</div>
+                <div className="flex gap-2.5 pt-2.5">
+                  <div className="h-6 w-10 bg-white rounded-[6px] flex items-center justify-center p-1 shadow-sm border border-white/10">
+                     <img src="/icons/visa.svg" alt="Visa" className="h-full w-full object-contain" />
+                  </div>
+                  <div className="h-6 w-10 bg-white rounded-[6px] flex items-center justify-center p-1 shadow-sm border border-white/10">
+                     <img src="/icons/mastercard.svg" alt="Mastercard" className="h-full w-full object-contain" />
+                  </div>
+                  <div className="h-6 w-10 bg-white rounded-[6px] flex items-center justify-center p-1 shadow-sm border border-white/10">
+                     <img src="/icons/amex.svg" alt="Amex" className="h-full w-full object-contain" />
+                  </div>
+                  <div className="h-6 w-10 bg-white rounded-[6px] flex items-center justify-center p-1 shadow-sm border border-white/10">
+                     <img src="/icons/maestro.svg" alt="Maestro" className="h-full w-full object-contain" />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/90">{t.apply.paymentExpiry} (MM/GG)</label>
+              {/* Expiry + CVC */}
+              <div className="grid gap-10 md:grid-cols-2">
+                <div className="space-y-4">
+                  <label className="text-[11px] uppercase tracking-[0.35em] font-bold text-white/30">{t.apply.paymentExpiry} (MM/YY)</label>
                   <input
                     value={paymentData.expiry}
                     onChange={(e) => updatePayment({ expiry: e.target.value })}
                     placeholder="MM / YY"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
+                    className="w-full h-[52px] rounded-[12px] border border-white/5 bg-white/[0.05] px-6 text-base text-white focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-[#C9A646]/30 transition-all placeholder:text-white/10"
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/90">{t.apply.paymentCvc}</label>
+                <div className="space-y-4">
+                  <label className="text-[11px] uppercase tracking-[0.35em] font-bold text-white/30">{t.apply.paymentCvc}</label>
                   <input
                     value={paymentData.cvc}
                     onChange={(e) => updatePayment({ cvc: e.target.value })}
                     placeholder="CVC"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
+                    className="w-full h-[52px] rounded-[12px] border border-white/5 bg-white/[0.05] px-6 text-base text-white focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-[#C9A646]/30 transition-all placeholder:text-white/10"
                     required
                   />
                 </div>
               </div>
             </div>
 
-            {/* Disclaimer Box */}
-            <div className="flex gap-4 rounded-[20px] border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-               <Info className="h-5 w-5 shrink-0 text-[#d4af37]" />
-               <p className="text-xs leading-relaxed text-white/70">
+            {/* Info Box (Refund) */}
+            <div className="flex gap-5 rounded-[12px] bg-white/[0.04] p-6 backdrop-blur-md border border-white/5 items-center">
+               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/40">
+                 <Info className="h-5 w-5" />
+               </div>
+               <p className="text-[11px] leading-[1.6] text-white/50 max-w-[500px]">
                  {t.apply.paymentDescription}
                </p>
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center justify-between pt-4">
+            <div className="flex items-center justify-between pt-12">
               <button
                 type="button"
                 onClick={() => router.push("/apply/form")}
-                className="rounded-xl border border-white/20 px-10 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white/5 active:scale-[0.98]"
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
+                className="rounded-lg border border-white/10 bg-black/40 px-12 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white/5 active:scale-[0.98]"
               >
-                {t.common.back}
+                {lang === "hr" ? "Povratak" : "Back"}
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="gold-gradient flex items-center gap-2 rounded-xl px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black shadow-[0_12px_32px_rgba(212,175,55,0.2)] transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+                className="bg-[linear-gradient(135deg,#C9A646,#F6E27A)] flex items-center justify-center rounded-full px-7 py-3 text-[12px] font-bold uppercase tracking-[0.25em] text-black shadow-[0_0_25px_rgba(201,166,70,0.5)] transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50 min-w-[200px]"
               >
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Idi na plaćanje"}
+                {isSubmitting ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  lang === "hr" ? "Potvrdi plaćanje" : "Go to payment"
+                )}
               </button>
             </div>
           </form>
         </div>
 
         {/* Right Column: Sticky Summary */}
-        <aside className="sticky top-24">
+        <aside className="sticky top-[120px] self-start">
            <ApplySidebar />
         </aside>
       </div>

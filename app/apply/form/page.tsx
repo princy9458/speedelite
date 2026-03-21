@@ -48,21 +48,13 @@ export default function ApplyFormPage() {
     facePhoto: false,
     bodyPhoto: false,
   });
-<<<<<<< HEAD
-  const [showRestoredNotice, setShowRestoredNotice] = useState(false);
-=======
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
   const [fileTouched, setFileTouched] = useState<{ facePhoto: boolean; bodyPhoto: boolean }>({
     facePhoto: false,
     bodyPhoto: false,
   });
   const [isValidationTriggered, setIsValidationTriggered] = useState(false);
   const hasMountedRef = useRef(false);
-<<<<<<< HEAD
-  const t = getDictionary(lang) as typeof dictionaries.en;
-=======
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
 
   const formSchema = useMemo(
     () =>
@@ -392,66 +384,15 @@ export default function ApplyFormPage() {
       <div className="flex justify-end">
         <button
           type="button"
-<<<<<<< HEAD
-          onClick={() => {
-            const firstNames = ["James", "Robert", "John", "Michael", "David", "William", "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth"];
-            const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
-            const cities = ["New York", "London", "Paris", "Berlin", "Zagreb", "Split", "Dubai", "Tokyo"];
-            const occupations = ["Software Engineer", "Architect", "Designer", "Doctor", "Entrepreneur", "Lawyer", "Marketing Expert"];
-            const educations = ["Master of Science", "Bachelor of Arts", "PhD", "MBA", "University of Arts"];
-
-            const randomVal = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-            
-            const dummyData: BookingFormData = {
-              firstName: randomVal(firstNames),
-              lastName: randomVal(lastNames),
-              email: `user_${Math.floor(Math.random() * 10000)}@example.com`,
-              mobile: `+3859${Math.floor(Math.random() * 899999 + 100000)}`,
-              dob: "199" + (Math.floor(Math.random() * 9) + 0) + "-0" + (Math.floor(Math.random() * 9) + 1) + "-15",
-              residence: randomVal(cities),
-              education: randomVal(educations),
-              occupation: randomVal(occupations),
-              height: (Math.floor(Math.random() * 40) + 160).toString(),
-              children: Math.random() > 0.5 ? "None" : "1",
-              interests: ["Design", "Travel", "Tech", "Music", "Fitness"].sort(() => 0.5 - Math.random()).slice(0, 3),
-              short_desc: "A passionate individual looking for meaningful connections and great conversations in a premium environment.",
-              smoker: "No",
-              exercise: "Regularly",
-              languages: "English, Croatian",
-              looking_for: "Serious Relationship",
-              sleeping_habits: "Early bird",
-              outings: "Dinner & Drinks",
-              termsAgreement: true,
-            };
-            
-            form.reset(dummyData);
-            updateForm(dummyData);
-            
-            updateUpload("facePhoto", {
-              name: "sample-face.jpg",
-              preview: "/uploads/bookings/booking-1774010636631-4b614de1-5711-4842-aaf7-cccbd7b0b042.jpg",
-              url: "/uploads/bookings/booking-1774010636631-4b614de1-5711-4842-aaf7-cccbd7b0b042.jpg",
-            });
-            updateUpload("bodyPhoto", {
-              name: "sample-body.jpg",
-              preview: "/uploads/bookings/booking-1774010576205-65fa98d1-a591-46ca-94ed-7724701b55cd.jpg",
-              url: "/uploads/bookings/booking-1774010576205-65fa98d1-a591-46ca-94ed-7724701b55cd.jpg",
-            });
-            
-            toast.success("Form magically auto-filled");
-          }}
-          className="rounded-full bg-white/5 px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#E5E2E1]/60 hover:bg-[#D4AF37]/20 hover:text-[#D4AF37] transition-all duration-500 flex items-center gap-2 group border border-white/5"
-=======
           onClick={handleAutoFill}
           className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/40 transition hover:border-[#d5ad5b]/30 hover:bg-white/10 hover:text-[#f0ca7d]"
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
         >
           <Sparkles className="h-3 w-3 group-hover:scale-125 transition-transform" />
           Auto-Fill (SpeedElite Testing)
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px] items-start">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_380px] items-start">
         <section className={cn(fieldSurfaceClassName, "p-10")}>
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.34em] text-[#d5ad5b]/75">Step 2</p>
@@ -573,7 +514,6 @@ export default function ApplyFormPage() {
               </button>
               <button
                 type="submit"
-<<<<<<< HEAD
                 onClick={async (e) => {
                   if (!isStepValid) {
                     e.preventDefault();
@@ -597,7 +537,7 @@ export default function ApplyFormPage() {
                           (input as HTMLElement).focus?.();
                         }
                       }
-                      toast.error(t.apply.validation.completeRequired || "Please complete all required fields highlighted in red.");
+                      toast.error(t.apply.validation.fixErrors || "Please complete all required fields highlighted in red.");
                     } else if (!uploads.facePhoto || !uploads.bodyPhoto) {
                       // Scroll to photo section if data is valid but photos aren't
                       console.log("SpeedElite Debug - Validation Success but Photos Missing");
@@ -607,25 +547,11 @@ export default function ApplyFormPage() {
                       }
                       toast.error(t.apply.validation.photoRequired);
                     }
-                  } else {
-                    console.log("SpeedElite Debug - Manual Validation Success, Proceeding...");
                   }
                 }}
                 className={cn(
-                  "rounded-[14px] px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300",
-                  "bg-[linear-gradient(180deg,#D4AF37_0%,#F2CA50_100%)] text-black shadow-[0_16px_32px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_40px_rgba(212,175,55,0.35)] hover:scale-[1.02] cursor-pointer"
-=======
-                onClick={() => {
-                  if (!isStepValid) {
-                    form.trigger();
-                    setFileTouched({ facePhoto: true, bodyPhoto: true });
-                    toast.error(t.apply.validation.fixErrors);
-                  }
-                }}
-                className={cn(
-                  "rounded-[14px] bg-[linear-gradient(180deg,#d4af37_0%,#f2ca50_100%)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.22em] text-black shadow-[0_16px_36px_rgba(212,175,55,0.22)] transition hover:brightness-105 active:scale-[0.98]",
+                  "rounded-[14px] bg-[linear-gradient(180deg,#d4af37_0%,#f2ca50_100%)] px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] text-black shadow-[0_16px_36px_rgba(212,175,55,0.22)] transition hover:brightness-105 active:scale-[0.98] cursor-pointer",
                   !isStepValid && "opacity-60 grayscale-[0.5]"
->>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
                 )}
               >
                 {t.common.nextStep}
@@ -634,11 +560,9 @@ export default function ApplyFormPage() {
           </form>
         </section>
 
-        <div className="relative">
-          <aside className="sticky top-24">
-            <ApplySidebar />
-          </aside>
-        </div>
+        <aside className="sticky top-[120px] self-start">
+           <ApplySidebar />
+        </aside>
       </div>
     </div>
   );
