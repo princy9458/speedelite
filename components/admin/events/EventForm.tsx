@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -237,6 +237,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
         return;
       }
       toast.success(eventId ? "Event updated" : "Event created");
+      router.refresh();
       router.push("/admin/events");
     } catch {
       toast.error("Something went wrong");

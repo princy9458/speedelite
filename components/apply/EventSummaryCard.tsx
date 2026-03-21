@@ -35,13 +35,15 @@ export default function EventSummaryCard({ lang, role, event }: EventSummaryCard
 
   return (
     <aside className="rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(213,173,91,0.18),_rgba(255,255,255,0.03)_38%,_rgba(0,0,0,0.55)_100%)] p-5 backdrop-blur-[18px] shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
-      <div className="overflow-hidden rounded-2xl">
+      <div className="overflow-hidden rounded-2xl relative shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
         {event.featuredImage ? (
           <Image
             src={event.featuredImage}
             alt={title}
             width={640}
             height={420}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            loading="eager"
             className="h-48 w-full object-cover"
           />
         ) : (
@@ -50,6 +52,8 @@ export default function EventSummaryCard({ lang, role, event }: EventSummaryCard
             alt="Event Placeholder"
             width={640}
             height={420}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            loading="eager"
             className="h-48 w-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700"
           />
         )}

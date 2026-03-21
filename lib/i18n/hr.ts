@@ -101,7 +101,7 @@ export const hr = {
     },
   },
   apply: {
-    steps: ["Event", "Forma", "Placanje", "Potvrda"],
+    steps: ["Event", "Forma", "Rezervacija", "Verifikacija", "Zavr\u0161etak"],
     formTitle: "Prijavni obrazac",
     stepLabel: "Korak 2",
     eventSummaryTitle: "Odabrani event",
@@ -127,13 +127,16 @@ export const hr = {
     validation: {
       required: "Ovo polje je obavezno.",
       email: "Unesite ispravnu email adresu.",
-      mobile: "Unesite samo znamenke.",
+      mobile: "Unesite ispravan broj mobitela.",
       height: "Unesite brojcanu visinu.",
+      interestRequired: "Odaberite barem jedan interes.",
       photoRequired: "Prenesite ovu fotografiju.",
       photoType: "Dozvoljene su samo JPG, JPEG i PNG datoteke.",
       photoSize: "Datoteka mora biti manja od 2MB.",
-      terms: "Morate prihvatiti uvjete.",
+      terms: "Morate prihvatiti Uvjete i odredbe za nastavak.",
+      completeRequired: "Molimo ispunite sva obavezna polja označena crvenom bojom.",
     },
+    checkFormErrors: "Molimo ispravite pogreške u obrascu prije nastavka.",
     placeholders: {
       firstName: "Unesite ime",
       lastName: "Unesite prezime",

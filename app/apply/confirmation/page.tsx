@@ -30,13 +30,15 @@ export default function ConfirmationPage() {
 
   return (
     <div className="space-y-10">
-      <ProgressSteps steps={t.apply.steps} currentStep={4} />
+      <ProgressSteps steps={t.apply.steps} currentStep={5} />
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="glass-card rounded-3xl border border-white/10 p-8 space-y-8 text-center flex flex-col items-center justify-center min-h-[400px]">
-          <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Step 4</p>
-            <h1 className="text-4xl font-serif gold-text">{t.apply.steps[3]}</h1>
+        <div className="rounded-[32px] bg-[#1a1a1a]/40 backdrop-blur-3xl p-12 space-y-12 text-center flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden border-t border-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
+          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.12),transparent_70%)] pointer-events-none" />
+          
+          <div className="relative space-y-3">
+            <p className="text-[10px] uppercase tracking-[0.4em] text-[#D4AF37] font-bold">Step 5</p>
+            <h1 className="text-4xl font-serif gold-text">{t.apply.steps[4]}</h1>
           </div>
           
           <div className="space-y-6 max-w-md">

@@ -118,7 +118,7 @@ export default function PaymentPage() {
         bookingNumber: data.bookingNumber,
         message: data.message || t.apply.submitSuccessBody,
       });
-      router.push("/apply/confirmation");
+      router.push("/apply/verification");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to complete booking");
     } finally {
@@ -131,47 +131,54 @@ export default function PaymentPage() {
       <ProgressSteps steps={t.apply.steps} currentStep={3} />
       
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="glass-card rounded-3xl border border-white/10 p-8 space-y-6">
+        <div className="rounded-[32px] bg-[#1a1a1a]/40 backdrop-blur-3xl p-8 space-y-8 border-t border-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Step 3</p>
-            <h1 className="text-3xl font-serif">{t.apply.paymentTitle}</h1>
+            <p className="text-[10px] uppercase tracking-[0.4em] text-[#D4AF37] font-bold">Step 3</p>
+            <h1 className="mt-2 text-4xl font-serif text-white">{t.apply.steps[2]}</h1>
           </div>
           <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
             <input
               value={paymentData.cardNumber}
               onChange={(e) => updatePayment({ cardNumber: e.target.value })}
               placeholder={t.apply.paymentCardNumber}
-              className="rounded-xl border border-white/10 bg-black/40 p-3 text-sm focus:border-[#d5ad5b] focus:outline-none transition-colors"
+              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
               required
             />
             <input
               value={paymentData.expiry}
               onChange={(e) => updatePayment({ expiry: e.target.value })}
               placeholder={t.apply.paymentExpiry}
-              className="rounded-xl border border-white/10 bg-black/40 p-3 text-sm focus:border-[#d5ad5b] focus:outline-none transition-colors"
+              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
               required
             />
             <input
               value={paymentData.cvc}
               onChange={(e) => updatePayment({ cvc: e.target.value })}
               placeholder={t.apply.paymentCvc}
-              className="rounded-xl border border-white/10 bg-black/40 p-3 text-sm focus:border-[#d5ad5b] focus:outline-none transition-colors"
+              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
               required
             />
             <input
               value={paymentData.discountCode}
               onChange={(e) => updatePayment({ discountCode: e.target.value })}
               placeholder={t.apply.paymentDiscount}
-              className="rounded-xl border border-white/10 bg-black/40 p-3 text-sm focus:border-[#d5ad5b] focus:outline-none transition-colors"
+              className="rounded-xl border-none bg-white/[0.03] p-4 text-sm text-[#E5E2E1] focus:ring-1 focus:ring-[#D4AF37]/30 transition-all placeholder:text-white/20"
             />
-            <div className="md:col-span-2 flex items-center justify-between border-t border-white/10 pt-4">
-              <span className="text-white/60 text-sm">{t.apply.paymentTotal}</span>
-              <span className="text-xl font-bold text-[#F4D693]">EUR {amountPaid}</span>
+            <div className="md:col-span-2 flex items-center justify-between border-t border-white/[0.06] pt-6">
+              <span className="text-[#E5E2E1]/40 text-xs uppercase tracking-widest font-bold font-sans">{t.apply.paymentTotal}</span>
+              <span className="text-2xl font-serif text-[#F2CA50] drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]">EUR {amountPaid}</span>
             </div>
-            <div className="md:col-span-2 flex justify-end">
+            <div className="md:col-span-2 flex items-center justify-between gap-6 mt-4">
+              <button
+                type="button"
+                onClick={() => router.push("/apply/form")}
+                className="rounded-[14px] border border-white/12 px-6 py-3.5 text-[11px] uppercase tracking-[0.25em] text-[#E5E2E1]/60 transition-all duration-300 hover:border-[#D4AF37]/40 hover:text-[#F2CA50] hover:bg-white/5"
+              >
+                {t.common.back}
+              </button>
               <button
                 disabled={isSubmitting}
-                className="gold-gradient flex items-center gap-2 rounded-xl px-10 py-3.5 text-sm font-bold uppercase tracking-widest text-black disabled:opacity-70 shadow-[0_12px_32px_rgba(212,175,55,0.15)] hover:scale-[1.02] transition-transform"
+                className="rounded-[14px] bg-[linear-gradient(180deg,#D4AF37_0%,#F2CA50_100%)] px-10 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] text-black shadow-[0_16px_32px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(212,175,55,0.3)] hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale disabled:scale-100 flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>

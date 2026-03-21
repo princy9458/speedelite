@@ -26,7 +26,7 @@
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, #f4d693 0%, #c9a965 50%, #BD953E 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #F2CA50 50%, #D4AF37 100%);
 }
 
 .card-gradient {
@@ -185,8 +185,9 @@
 }
 
 .gold-text {
-  background: linear-gradient(180deg, #f4d693 0%, #c9a965 100%);
+  background: linear-gradient(180deg, #F2CA50 0%, #D4AF37 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

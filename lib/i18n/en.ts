@@ -101,7 +101,7 @@ export const en = {
     },
   },
   apply: {
-    steps: ["Event", "Form", "Payment", "Confirmation"],
+    steps: ["Event", "Form", "Reservation", "Verification", "Completion"],
     formTitle: "Application Form",
     stepLabel: "Step 2",
     eventSummaryTitle: "Selected Event",
@@ -127,13 +127,16 @@ export const en = {
     validation: {
       required: "This field is required.",
       email: "Please enter a valid email address.",
-      mobile: "Please enter digits only.",
+      mobile: "Please enter a valid mobile number.",
       height: "Please enter a numeric height.",
+      interestRequired: "Select at least one interest.",
       photoRequired: "Please upload this photo.",
       photoType: "Only JPG, JPEG, and PNG files are allowed.",
       photoSize: "File must be 2MB or smaller.",
-      terms: "You must accept the terms.",
+      terms: "You must accept the Terms & Conditions to proceed.",
+      completeRequired: "Please complete all required fields highlighted in red.",
     },
+    checkFormErrors: "Please correct the errors in the form before proceeding.",
     placeholders: {
       firstName: "Enter first name",
       lastName: "Enter last name",
