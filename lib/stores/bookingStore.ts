@@ -56,6 +56,11 @@ type BookingState = {
   uploads: UploadState;
   paymentData: PaymentData;
   confirmation: ConfirmationData;
+  interview: {
+    date: string;
+    time: string;
+    timezone: string;
+  } | null;
   setRole: (role: "lady" | "gent") => void;
   setLang: (lang: "en" | "hr") => void;
   setEventId: (eventId: string) => void;
@@ -63,6 +68,7 @@ type BookingState = {
   updateUpload: (field: keyof UploadState, value: UploadPreview) => void;
   updatePayment: (data: Partial<PaymentData>) => void;
   setConfirmation: (data: ConfirmationData) => void;
+  setInterview: (data: { date: string; time: string; timezone: string } | null) => void;
   reset: () => void;
 };
 
@@ -120,6 +126,7 @@ export const useBookingStore = create<BookingState>()(
       uploads: initialUploads,
       paymentData: initialPaymentData,
       confirmation: null,
+      interview: null,
       setRole: (role) => set({ role }),
       setLang: (lang) => set({ lang }),
       setEventId: (eventId) => set({ eventId }),
@@ -128,6 +135,7 @@ export const useBookingStore = create<BookingState>()(
         set((state) => ({ uploads: { ...state.uploads, [field]: value } })),
       updatePayment: (data) => set((state) => ({ paymentData: { ...state.paymentData, ...data } })),
       setConfirmation: (data) => set({ confirmation: data }),
+      setInterview: (interview) => set({ interview }),
       reset: () =>
         set({
           role: null,
@@ -136,6 +144,7 @@ export const useBookingStore = create<BookingState>()(
           uploads: initialUploads,
           paymentData: initialPaymentData,
           confirmation: null,
+          interview: null,
           lang: get().lang,
         }),
     }),

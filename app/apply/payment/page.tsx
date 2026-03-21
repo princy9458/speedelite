@@ -2,16 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Info, Calendar, MapPin, Ticket, Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 import ProgressSteps from "@/components/apply/ProgressSteps";
-import EventSummaryCard from "@/components/apply/EventSummaryCard";
+import ApplySidebar from "@/components/apply/ApplySidebar";
 import { getDictionary } from "@/lib/i18n";
 import { useBookingStore } from "@/lib/stores/bookingStore";
 import { bookingFormSchema, bookingPaymentSchema } from "@/lib/validators/booking";
+import { cn } from "@/lib/utils";
+import { z } from "zod";
 
 export default function PaymentPage() {
   const router = useRouter();
+  const imagePathSchema = z
+  .string()
+  .min(1, "Image is required");
   const {
     eventId,
     role,
@@ -20,11 +26,13 @@ export default function PaymentPage() {
     uploads,
     paymentData,
     updatePayment,
-    reset,
     setConfirmation,
   } = useBookingStore();
   const [event, setEvent] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [view, setView] = useState<"input" | "success">("input");
+  const [couponCode, setCouponCode] = useState(paymentData.discountCode || "");
+  const [discount, setDiscount] = useState(0);
   const t = getDictionary(lang);
 
   useEffect(() => {
@@ -37,7 +45,19 @@ export default function PaymentPage() {
       .then(setEvent);
   }, [eventId, router]);
 
-  const amountPaid = event ? (role === "lady" ? event.priceFemale : event.priceMale) : 0;
+  const basePrice = event ? (role === "lady" ? event.priceFemale : event.priceMale) : 0;
+  const finalPrice = Math.max(0, basePrice * (1 - discount));
+  const eventTitle = lang === "hr" ? event?.translations?.hr?.title || event?.title : event?.translations?.en?.title || event?.title;
+  const eventDateStr = event?.date ? new Date(event.date).toLocaleDateString(lang === "hr" ? "hr-HR" : "en-US") : "";
+
+  const handleAutoFill = () => {
+    updatePayment({
+      cardNumber: "4242 4242 4242 4242",
+      expiry: "12/26",
+      cvc: "123",
+    });
+    toast.success("Payment details auto-filled");
+  };
 
   const uploadBookingImage = async (file: File) => {
     const payload = new FormData();
@@ -61,17 +81,9 @@ export default function PaymentPage() {
     e.preventDefault();
     if (!eventId || !event || !role) return;
 
-    const formCheck = bookingFormSchema.safeParse(formData);
     const paymentCheck = bookingPaymentSchema.safeParse(paymentData);
-
-    const hasFacePhoto = !!uploads.facePhoto?.url || !!uploads.facePhoto?.file;
-    const hasBodyPhoto = !!uploads.bodyPhoto?.url || !!uploads.bodyPhoto?.file;
-
-    if (!formCheck.success || !paymentCheck.success || !hasFacePhoto || !hasBodyPhoto) {
+    if (!paymentCheck.success) {
       toast.error(t.apply.paymentValidationError);
-      if (!hasFacePhoto || !hasBodyPhoto) {
-        router.push("/apply/form");
-      }
       return;
     }
 
@@ -90,7 +102,7 @@ export default function PaymentPage() {
           eventId,
           role,
           lang,
-          amountPaid,
+          amountPaid: finalPrice,
           paymentStatus: "paid",
           currency: "EUR",
           couponCode: paymentData.discountCode,
@@ -112,13 +124,18 @@ export default function PaymentPage() {
         return;
       }
 
-      reset();
       setConfirmation({
         bookingId: data.bookingId,
         bookingNumber: data.bookingNumber,
         message: data.message || t.apply.submitSuccessBody,
       });
+<<<<<<< HEAD
       router.push("/apply/verification");
+=======
+
+      setView("success");
+      toast.success("Payment Successful!");
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to complete booking");
     } finally {
@@ -126,10 +143,93 @@ export default function PaymentPage() {
     }
   };
 
+  if (view === "success") {
+    return (
+      <div className="mx-auto max-w-[1240px] space-y-12 pb-20">
+        <ProgressSteps steps={t.apply.steps} currentStep={3} />
+        
+        <div className="space-y-4">
+          <h1 className="text-4xl font-serif text-white">{lang === "hr" ? "Plaćanje uspješno" : "Payment Successful"}</h1>
+          <p className="text-white/60">
+            {lang === "hr" ? "Uplata je uspješno izvršena. Još jedan korak do završetka prijave." : "Payment has been processed successfully. One more step to complete your application."}
+          </p>
+        </div>
+
+        <div className="mx-auto max-w-[900px]">
+          <div className="overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl">
+            <div className="grid md:grid-cols-[1fr_1.2fr]">
+              {/* Left Side: Event Block */}
+              <div className="relative aspect-square md:aspect-auto">
+                {event?.featuredImage && (
+                  <Image
+                    src={event.featuredImage}
+                    alt={eventTitle}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/40" />
+                <div className="absolute bottom-8 left-8">
+                  <h2 className="font-serif text-4xl font-bold text-white mb-4">{eventTitle}</h2>
+                  <div className="flex items-center gap-2 text-[#d4af37]">
+                    <Calendar className="h-5 w-5" />
+                    <span className="text-lg font-medium">{eventDateStr} {event?.time}h</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side: Details Block */}
+              <div className="p-10 space-y-8">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between text-white/50">
+                    <span className="text-sm uppercase tracking-widest">{lang === "hr" ? "Kod za popust" : "Coupon Code"}</span>
+                    <span className="text-sm">{paymentData.discountCode || "N/A"}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-white/90">
+                      <Ticket className="h-5 w-5 text-[#d4af37]" />
+                      <span className="text-sm font-medium uppercase tracking-widest text-[#d4af37]">{lang === "hr" ? "Popust" : "Discount"}</span>
+                    </div>
+                    <span className="text-xl font-bold text-[#d4af37]">-{basePrice - finalPrice} EUR</span>
+                  </div>
+                </div>
+
+                <div className="h-px w-full bg-white/10" />
+
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-serif font-bold text-white">Total</span>
+                    <span className="text-2xl font-serif font-bold text-white">{finalPrice} EUR</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-white/50">
+                    <span className="text-sm uppercase tracking-widest">{lang === "hr" ? "Plaćanje" : "Payment"}</span>
+                    <span className="text-sm">Simulated *{paymentData.cardNumber.slice(-4)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 flex justify-end">
+             <button
+                onClick={() => router.push("/apply/verification")}
+                className="gold-gradient rounded-xl px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black shadow-[0_12px_32px_rgba(212,175,55,0.2)] transition hover:brightness-110 active:scale-[0.98]"
+             >
+                {lang === "hr" ? "Sljedeći korak" : "Next Step"}
+             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-10">
+    <div className="mx-auto max-w-[1240px] space-y-12 pb-20">
       <ProgressSteps steps={t.apply.steps} currentStep={3} />
       
+<<<<<<< HEAD
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="rounded-[32px] bg-[#1a1a1a]/40 backdrop-blur-3xl p-8 space-y-8 border-t border-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
           <div>
@@ -179,25 +279,98 @@ export default function PaymentPage() {
               <button
                 disabled={isSubmitting}
                 className="rounded-[14px] bg-[linear-gradient(180deg,#D4AF37_0%,#F2CA50_100%)] px-10 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] text-black shadow-[0_16px_32px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(212,175,55,0.3)] hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale disabled:scale-100 flex items-center gap-2"
+=======
+      <div className="flex justify-end">
+        <button
+          onClick={handleAutoFill}
+          className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/40 transition hover:border-[#d5ad5b]/30 hover:bg-white/10 hover:text-[#f0ca7d]"
+        >
+          <Sparkles className="h-3 w-3 group-hover:animate-pulse" />
+          Auto-fill (Testing)
+        </button>
+      </div>
+
+      <div className="grid gap-16 lg:grid-cols-[1fr_380px] items-start">
+        {/* Left Column: Payment Form */}
+        <div className="space-y-10">
+          <h1 className="text-4xl font-serif text-white">{t.apply.paymentTitle}</h1>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white/90">{t.apply.paymentCardNumber}</label>
+                <input
+                  value={paymentData.cardNumber}
+                  onChange={(e) => updatePayment({ cardNumber: e.target.value })}
+                  placeholder="1234 1234 1234 1234"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
+                  required
+                />
+                <div className="flex gap-2 pt-2 opacity-60 grayscale hover:grayscale-0 transition-all">
+                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">VISA</div>
+                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">MC</div>
+                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">AMEX</div>
+                  <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">MAESTRO</div>
+                </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/90">{t.apply.paymentExpiry} (MM/GG)</label>
+                  <input
+                    value={paymentData.expiry}
+                    onChange={(e) => updatePayment({ expiry: e.target.value })}
+                    placeholder="MM / YY"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/90">{t.apply.paymentCvc}</label>
+                  <input
+                    value={paymentData.cvc}
+                    onChange={(e) => updatePayment({ cvc: e.target.value })}
+                    placeholder="CVC"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Disclaimer Box */}
+            <div className="flex gap-4 rounded-[20px] border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+               <Info className="h-5 w-5 shrink-0 text-[#d4af37]" />
+               <p className="text-xs leading-relaxed text-white/70">
+                 {t.apply.paymentDescription}
+               </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex items-center justify-between pt-4">
+              <button
+                type="button"
+                onClick={() => router.push("/apply/form")}
+                className="rounded-xl border border-white/20 px-10 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white/5 active:scale-[0.98]"
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t.apply.paymentSubmitting}
-                  </>
-                ) : (
-                  t.apply.paymentSubmit
-                )}
+                {t.common.back}
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="gold-gradient flex items-center gap-2 rounded-xl px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black shadow-[0_12px_32px_rgba(212,175,55,0.2)] transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+              >
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Idi na plaćanje"}
               </button>
             </div>
           </form>
         </div>
 
-        <div className="lg:pt-4">
-          <div className="lg:sticky lg:top-[100px]">
-            <EventSummaryCard lang={lang} role={role} event={event} />
-          </div>
-        </div>
+        {/* Right Column: Sticky Summary */}
+        <aside className="sticky top-24">
+           <ApplySidebar />
+        </aside>
       </div>
     </div>
   );

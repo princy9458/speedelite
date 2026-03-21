@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import ProgressSteps from "@/components/apply/ProgressSteps";
-import EventSummaryCard from "@/components/apply/EventSummaryCard";
+import ApplySidebar from "@/components/apply/ApplySidebar";
 import PortalPopover from "@/components/admin/form/PortalPopover";
 import {
   applicationFormFields,
@@ -40,20 +40,29 @@ const getFieldClassName = (hasError: boolean) =>
 export default function ApplyFormPage() {
   const router = useRouter();
   const { eventId, lang, role, formData, uploads, updateForm, updateUpload } = useBookingStore();
+  const [showRestoredNotice, setShowRestoredNotice] = useState(false);
+  const t = getDictionary(lang);
   const [event, setEvent] = useState<any>(null);
   const [isLoadingEvent, setIsLoadingEvent] = useState(false);
   const [isUploading, setIsUploading] = useState<{ facePhoto: boolean; bodyPhoto: boolean }>({
     facePhoto: false,
     bodyPhoto: false,
   });
+<<<<<<< HEAD
   const [showRestoredNotice, setShowRestoredNotice] = useState(false);
+=======
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
   const [fileTouched, setFileTouched] = useState<{ facePhoto: boolean; bodyPhoto: boolean }>({
     facePhoto: false,
     bodyPhoto: false,
   });
   const [isValidationTriggered, setIsValidationTriggered] = useState(false);
   const hasMountedRef = useRef(false);
+<<<<<<< HEAD
   const t = getDictionary(lang) as typeof dictionaries.en;
+=======
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
 
   const formSchema = useMemo(
     () =>
@@ -86,6 +95,54 @@ export default function ApplyFormPage() {
     mode: "onChange",
     values: formData,
   });
+
+  const handleAutoFill = () => {
+    const firstNames = ["James", "Robert", "John", "Michael", "David", "William", "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth"];
+    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
+    const cities = ["New York", "London", "Paris", "Berlin", "Zagreb", "Split", "Dubai", "Tokyo"];
+    const occupations = ["Software Engineer", "Architect", "Designer", "Doctor", "Entrepreneur", "Lawyer", "Marketing Expert"];
+    const educations = ["Master of Science", "Bachelor of Arts", "PhD", "MBA", "University of Arts"];
+
+    const randomVal = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+    
+    const dummyData: BookingFormData = {
+      firstName: randomVal(firstNames),
+      lastName: randomVal(lastNames),
+      email: `user_${Math.floor(Math.random() * 10000)}@example.com`,
+      mobile: `+3859${Math.floor(Math.random() * 899999 + 100000)}`,
+      dob: "199" + (Math.floor(Math.random() * 9) + 0) + "-0" + (Math.floor(Math.random() * 9) + 1) + "-15",
+      residence: randomVal(cities),
+      education: randomVal(educations),
+      occupation: randomVal(occupations),
+      height: (Math.floor(Math.random() * 40) + 160).toString(),
+      children: Math.random() > 0.5 ? "None" : "1",
+      interests: ["Design", "Travel", "Tech", "Music", "Fitness"].sort(() => 0.5 - Math.random()).slice(0, 3),
+      short_desc: "A passionate individual looking for meaningful connections and great conversations in a premium environment.",
+      smoker: "No",
+      exercise: "Regularly",
+      languages: "English, Croatian",
+      looking_for: "Serious Relationship",
+      sleeping_habits: "Early bird",
+      outings: "Dinner & Drinks",
+      termsAgreement: true,
+    };
+    
+    form.reset(dummyData);
+    updateForm(dummyData);
+    
+    updateUpload("facePhoto", {
+      name: "sample-face.jpg",
+      preview: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256&auto=format&fit=crop",
+      url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256&auto=format&fit=crop",
+    });
+    updateUpload("bodyPhoto", {
+      name: "sample-body.jpg",
+      preview: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256&auto=format&fit=crop",
+      url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256&auto=format&fit=crop",
+    });
+    
+    toast.success("Form auto-filled for testing");
+  };
 
   const watchedValues = useWatch({ control: form.control });
   const textFields = applicationFormFields.filter((field) => field.type !== "file" && field.type !== "checkbox");
@@ -157,7 +214,7 @@ export default function ApplyFormPage() {
   const hasFileError = (field: "facePhoto" | "bodyPhoto") =>
     !uploads[field] && (fileTouched[field] || form.formState.submitCount > 0);
 
-  const isStepValid = form.formState.isValid && !!uploads.facePhoto && !!uploads.bodyPhoto;
+  const isStepValid = form.formState.isValid && !!uploads.facePhoto?.url && !!uploads.bodyPhoto?.url;
 
   // DEBUG LOGS - Temporary
   useEffect(() => {
@@ -329,12 +386,13 @@ export default function ApplyFormPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-[1240px] space-y-8 pb-20">
       <ProgressSteps steps={t.apply.steps} currentStep={2} />
 
       <div className="flex justify-end">
         <button
           type="button"
+<<<<<<< HEAD
           onClick={() => {
             const firstNames = ["James", "Robert", "John", "Michael", "David", "William", "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth"];
             const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
@@ -383,17 +441,21 @@ export default function ApplyFormPage() {
             toast.success("Form magically auto-filled");
           }}
           className="rounded-full bg-white/5 px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#E5E2E1]/60 hover:bg-[#D4AF37]/20 hover:text-[#D4AF37] transition-all duration-500 flex items-center gap-2 group border border-white/5"
+=======
+          onClick={handleAutoFill}
+          className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/40 transition hover:border-[#d5ad5b]/30 hover:bg-white/10 hover:text-[#f0ca7d]"
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
         >
           <Sparkles className="h-3 w-3 group-hover:scale-125 transition-transform" />
           Auto-Fill (SpeedElite Testing)
         </button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <section className={fieldSurfaceClassName}>
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px] items-start">
+        <section className={cn(fieldSurfaceClassName, "p-10")}>
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.34em] text-[#d5ad5b]/75">{t.apply.stepLabel}</p>
-            <h1 className="font-serif text-3xl text-white sm:text-4xl">{t.apply.formTitle}</h1>
+            <p className="text-xs uppercase tracking-[0.34em] text-[#d5ad5b]/75">Step 2</p>
+            <h1 className="font-serif text-4xl text-white sm:text-5xl">{t.apply.formTitle}</h1>
             <div
               className={cn(
                 "flex min-h-[24px] items-center gap-2 text-sm transition-all duration-300",
@@ -511,6 +573,7 @@ export default function ApplyFormPage() {
               </button>
               <button
                 type="submit"
+<<<<<<< HEAD
                 onClick={async (e) => {
                   if (!isStepValid) {
                     e.preventDefault();
@@ -551,6 +614,18 @@ export default function ApplyFormPage() {
                 className={cn(
                   "rounded-[14px] px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300",
                   "bg-[linear-gradient(180deg,#D4AF37_0%,#F2CA50_100%)] text-black shadow-[0_16px_32px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_40px_rgba(212,175,55,0.35)] hover:scale-[1.02] cursor-pointer"
+=======
+                onClick={() => {
+                  if (!isStepValid) {
+                    form.trigger();
+                    setFileTouched({ facePhoto: true, bodyPhoto: true });
+                    toast.error(t.apply.validation.fixErrors);
+                  }
+                }}
+                className={cn(
+                  "rounded-[14px] bg-[linear-gradient(180deg,#d4af37_0%,#f2ca50_100%)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.22em] text-black shadow-[0_16px_36px_rgba(212,175,55,0.22)] transition hover:brightness-105 active:scale-[0.98]",
+                  !isStepValid && "opacity-60 grayscale-[0.5]"
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
                 )}
               >
                 {t.common.nextStep}
@@ -559,16 +634,10 @@ export default function ApplyFormPage() {
           </form>
         </section>
 
-        <div className="lg:pt-4">
-          <div className="lg:sticky lg:top-[100px] space-y-4">
-            {isLoadingEvent ? (
-              <div className="rounded-[28px] bg-white/[0.04] p-5 text-white/50 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-                {t.apply.loadingEvent}
-              </div>
-            ) : (
-              <EventSummaryCard lang={lang} role={role} event={event} />
-            )}
-          </div>
+        <div className="relative">
+          <aside className="sticky top-24">
+            <ApplySidebar />
+          </aside>
         </div>
       </div>
     </div>

@@ -43,27 +43,41 @@ export default function PortalPopover({
       if (!anchorEl || mobile || !portal) return;
 
       const rect = anchorEl.getBoundingClientRect();
-      const estimatedHeight = 380;
+      const popoverEl = popoverRef.current;
+      const actualHeight = popoverEl ? popoverEl.offsetHeight : 320;
+      
       const availableBelow = window.innerHeight - rect.bottom;
-      const placeAbove = availableBelow < estimatedHeight && rect.top > availableBelow;
+      const placeAbove = availableBelow < actualHeight + 20 && rect.top > availableBelow;
+      
       const width = matchWidth ? Math.max(rect.width, 280) : 320;
       const availableHeight = placeAbove ? rect.top - 24 : window.innerHeight - rect.bottom - 24;
 
       setStyle({
         position: "fixed",
         left: Math.min(rect.left, window.innerWidth - width - 16),
-        top: placeAbove ? Math.max(rect.top - estimatedHeight - 10, 16) : rect.bottom + 10,
+        top: placeAbove 
+          ? Math.max(rect.top - actualHeight - 8, 16) 
+          : rect.bottom + 8,
         width,
-        maxHeight: Math.max(Math.min(availableHeight, estimatedHeight), 240),
+        maxHeight: Math.max(availableHeight, 200),
         zIndex: 1200,
       });
     };
 
     updatePosition();
+    
+    // Use ResizeObserver for the popover content to catch height changes (like loading more options)
+    let resizeObserver: ResizeObserver | null = null;
+    if (popoverRef.current) {
+      resizeObserver = new ResizeObserver(updatePosition);
+      resizeObserver.observe(popoverRef.current);
+    }
+
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
 
     return () => {
+      resizeObserver?.disconnect();
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };

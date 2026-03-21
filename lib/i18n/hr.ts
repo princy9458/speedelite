@@ -101,7 +101,11 @@ export const hr = {
     },
   },
   apply: {
+<<<<<<< HEAD
     steps: ["Event", "Forma", "Rezervacija", "Verifikacija", "Zavr\u0161etak"],
+=======
+    steps: ["Termin", "Forma", "Rezervacija", "Verifikacija", "Završetak"],
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     formTitle: "Prijavni obrazac",
     stepLabel: "Korak 2",
     eventSummaryTitle: "Odabrani event",
@@ -127,14 +131,23 @@ export const hr = {
     validation: {
       required: "Ovo polje je obavezno.",
       email: "Unesite ispravnu email adresu.",
+<<<<<<< HEAD
       mobile: "Unesite ispravan broj mobitela.",
+=======
+      mobile: "Unesite ispravan broj mobitela (+, razmaci dopusteni).",
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
       height: "Unesite brojcanu visinu.",
       interestRequired: "Odaberite barem jedan interes.",
       photoRequired: "Prenesite ovu fotografiju.",
       photoType: "Dozvoljene su samo JPG, JPEG i PNG datoteke.",
       photoSize: "Datoteka mora biti manja od 2MB.",
+<<<<<<< HEAD
       terms: "Morate prihvatiti Uvjete i odredbe za nastavak.",
       completeRequired: "Molimo ispunite sva obavezna polja označena crvenom bojom.",
+=======
+      terms: "Morate prihvatiti uvjete.",
+      fixErrors: "Molimo ispunite sva obavezna polja i prenesite fotografije.",
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     },
     checkFormErrors: "Molimo ispravite pogreške u obrascu prije nastavka.",
     placeholders: {
@@ -230,7 +243,8 @@ export const hr = {
       title: "Event jos nije odabran",
       description: "Vratite se korak natrag i odaberite event prije nastavka.",
     },
-    paymentTitle: "Placanje",
+    paymentTitle: "Rezervacija",
+    paymentDescription: "U slučaju otkazivanja: do 48h prije termina, u potpunosti se vraća uplaćeni iznos. Otkazivanjem u zadnjih 48h nema povrata novca. U slučaju da niste odabrani za sudjelovanje, u potpunosti vraćamo uplaćeni iznos.",
     paymentCardNumber: "Broj kartice",
     paymentExpiry: "Vrijedi do",
     paymentCvc: "CVC",

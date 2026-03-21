@@ -101,7 +101,11 @@ export const en = {
     },
   },
   apply: {
+<<<<<<< HEAD
     steps: ["Event", "Form", "Reservation", "Verification", "Completion"],
+=======
+    steps: ["Event", "Form", "Booking", "Verification", "Completion"],
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     formTitle: "Application Form",
     stepLabel: "Step 2",
     eventSummaryTitle: "Selected Event",
@@ -127,14 +131,23 @@ export const en = {
     validation: {
       required: "This field is required.",
       email: "Please enter a valid email address.",
+<<<<<<< HEAD
       mobile: "Please enter a valid mobile number.",
+=======
+      mobile: "Please enter a valid mobile number (+, spaces allowed).",
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
       height: "Please enter a numeric height.",
       interestRequired: "Select at least one interest.",
       photoRequired: "Please upload this photo.",
       photoType: "Only JPG, JPEG, and PNG files are allowed.",
       photoSize: "File must be 2MB or smaller.",
+<<<<<<< HEAD
       terms: "You must accept the Terms & Conditions to proceed.",
       completeRequired: "Please complete all required fields highlighted in red.",
+=======
+      terms: "You must accept the terms.",
+      fixErrors: "Please fill in all required fields and upload photos.",
+>>>>>>> 31490afb0a8ab539e02129142ec0b15d0a9b92fe
     },
     checkFormErrors: "Please correct the errors in the form before proceeding.",
     placeholders: {
@@ -230,7 +243,8 @@ export const en = {
       title: "Event not selected yet",
       description: "Go back and choose an event before continuing.",
     },
-    paymentTitle: "Payment",
+    paymentTitle: "Booking",
+    paymentDescription: "In case of cancellation: up to 48 hours before the event, the amount paid is fully refunded. Cancellation in the last 48 hours is non-refundable. In case you are not selected for participation, we refund the full amount paid.",
     paymentCardNumber: "Card Number",
     paymentExpiry: "Expiry",
     paymentCvc: "CVC",
