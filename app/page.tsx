@@ -31,7 +31,7 @@ const translations = {
   hr: {
     nav: { about: "O nama", events: "DogaÄ‘aji", rules: "Pravila", contact: "Kontakt", login: "Prijava" },
     hero: {
-      title: "Elitni brzi",
+      title: "Monday",
       subtitle: "spojevi",
       desc: "SpeedElite Dating pruÅ¾a jedinstvenu priliku za brzo upoznavanje privlaÄnih djevojaka i poÅ¾eljnih muÅ¡karaca.",
       btnGent: "Prijavi se kao gospodin",

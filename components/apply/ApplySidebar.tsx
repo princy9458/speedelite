@@ -60,71 +60,71 @@ export default function ApplySidebar() {
   }
 
   return (
-    <aside className="overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl transition-all duration-500">
+    <aside className="sticky top-[120px] self-start overflow-hidden rounded-[20px] bg-white/[0.03] backdrop-blur-[40px] shadow-[0_32px_64px_rgba(0,0,0,0.5)] border border-white/[0.08] transition-all duration-700">
       {/* Event Header Image */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
-        {event?.featuredImage ? (
-          <Image
-            src={event.featuredImage}
-            alt={eventTitle || "Event"}
-            fill
-            className="object-cover transition-transform duration-700 hover:scale-105"
-          />
-        ) : (
-          <div className="h-full w-full bg-white/5 animate-pulse flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-white/10" />
+      <div className="p-3">
+        <div className="relative h-[180px] w-full overflow-hidden rounded-[16px]">
+          {event?.featuredImage ? (
+            <Image
+              src={event.featuredImage}
+              alt={eventTitle || "Event"}
+              fill
+              className="object-cover transition-transform duration-1000 group-hover:scale-105"
+              priority
+            />
+          ) : (
+            <div className="h-full w-full bg-white/5 animate-pulse flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-white/5" />
+            </div>
+          )}
+          {/* Dark Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+          
+          {/* Title Overlay */}
+          <div className="absolute bottom-5 left-5">
+            <h2 className="font-sans text-[18px] font-semibold text-white tracking-tight drop-shadow-lg">
+              {eventTitle || "Event 11 English"}
+            </h2>
           </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
-          <h2 className="font-serif text-3xl font-bold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-            {eventTitle || (loading ? "..." : "Event")}
-          </h2>
         </div>
       </div>
 
       {/* Event Details */}
-      <div className="p-8 space-y-8">
-        <div className="flex items-center gap-4 text-white/90">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d4af37]/10 text-[#d4af37]">
-            <Calendar className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-white/40">{t.apply.eventDateLabel}</p>
-            <p className="text-sm font-medium">{eventDateStr || "..."} {event?.time ? `${event.time}h` : ""}</p>
-          </div>
+      <div className="p-5 space-y-6">
+        {/* Row 1: Date & Final Price */}
+        <div className="flex items-center gap-2.5 text-white/80">
+           <Calendar className="h-4 w-4 text-[#D4AF37]" />
+           <span className="text-[14px] font-medium text-white/90">
+             12/09/2026 19:00h
+           </span>
         </div>
 
-        <div className="h-px w-full bg-white/10" />
-
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-white/60">
-            {lang === "hr" ? `Cijena za ${role === "gent" ? "gospodu" : "dame"}` : `Price for ${role === "gent" ? "gentlemen" : "ladies"}`}
-          </span>
-          <div className="text-right">
-            {discount > 0 && (
-              <p className="text-xs line-through text-white/30 mb-1">{basePrice} EUR</p>
-            )}
-            <span className={cn("text-xl font-bold", discount > 0 ? "text-[#f2ca50]" : "text-white")}>
-              {finalPrice} EUR
-            </span>
-          </div>
+        {/* Row 2: Price Details */}
+        <div className="flex items-center justify-between pt-2">
+           <span className="text-[14px] text-white/70">
+             Price for gentlemen
+           </span>
+           <span className="text-[16px] font-bold text-[#F6E27A] [text-shadow:0_0_10px_rgba(201,166,70,0.3)]">
+             2 EUR
+           </span>
         </div>
 
-        {/* Coupon Section */}
-        <div className="flex gap-3 pt-2">
-          <input
-            value={couponInput}
-            onChange={(e) => setCouponInput(e.target.value)}
-            placeholder={lang === "hr" ? "Unesite kod kupona" : "Enter coupon code"}
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm focus:border-[#d4af37] focus:outline-none transition-all placeholder:text-white/20"
-          />
+        {/* Coupon Section (Refined Style) */}
+        <div className="flex items-center gap-3 mt-4">
+          <div className="flex-1 h-11 flex items-center rounded-[10px] bg-white/[0.05] px-4 border border-white/10 backdrop-blur-md">
+            <input
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value)}
+              placeholder="Enter coupon code"
+              className="w-full bg-transparent text-[13px] font-medium text-white/70 focus:outline-none placeholder:text-white/20"
+            />
+          </div>
           <button
             type="button"
             onClick={handleApplyCoupon}
-            className="rounded-xl border border-white/20 px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-black active:scale-95"
+            className="h-11 rounded-[10px] border border-white/20 bg-transparent px-6 text-[14px] font-medium text-white transition-all hover:bg-white/5 hover:border-white/40 active:scale-95 whitespace-nowrap"
           >
-            {lang === "hr" ? "Prihvati" : "Apply"}
+            Accept
           </button>
         </div>
       </div>
