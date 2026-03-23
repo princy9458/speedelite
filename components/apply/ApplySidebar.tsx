@@ -4,48 +4,73 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Calendar, Ticket, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { getDictionary } from "@/lib/i18n";
+import { useTranslations, useLocale } from "next-intl";
 import { useBookingStore } from "@/lib/stores/bookingStore";
-import { cn } from "@/lib/utils";
 
 export default function ApplySidebar() {
-  const { eventId, role, lang, paymentData, updatePayment } = useBookingStore();
+  const { eventId, role, paymentData, updatePayment } = useBookingStore();
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [couponInput, setCouponInput] = useState(paymentData.discountCode || "");
+  const [coupon, setCoupon] = useState(paymentData.discountCode || "");
+  const [price, setPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const t = getDictionary(lang);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [applied, setApplied] = useState(!!paymentData.discountCode);
+
+  const t = useTranslations('apply');
+  const locale = useLocale();
+
+  const coupons: Record<string, number> = {
+    "SAVE5": 5,
+    "DISC10": 10,
+    "WELCOME": 15
+  };
 
   useEffect(() => {
     if (!eventId) return;
     setLoading(true);
     fetch(`/api/events/${eventId}`)
       .then((res) => res.json())
-      .then(setEvent)
+      .then((data) => {
+        setEvent(data);
+        const base = role === "lady" ? data.priceFemale : data.priceMale;
+        // If already applied (e.g. from previous steps or restore), calculate initial price
+        if (applied && paymentData.discountCode) {
+          const discountVal = coupons[paymentData.discountCode.toUpperCase()] || 0;
+          setDiscount(discountVal);
+          setPrice(base - discountVal);
+        } else {
+          setPrice(base);
+        }
+      })
       .finally(() => setLoading(false));
-  }, [eventId]);
+  }, [eventId, role, applied, paymentData.discountCode]);
 
   const basePrice = event ? (role === "lady" ? event.priceFemale : event.priceMale) : 0;
   
-  // Dummy Coupon Logic
   const handleApplyCoupon = () => {
-    if (couponInput.toUpperCase() === "OFF50") {
-      setDiscount(0.5);
-      updatePayment({ discountCode: "OFF50" });
-      toast.success("50% discount applied!");
-    } else if (couponInput.toUpperCase() === "FREE" && eventId) {
-      setDiscount(1);
-      updatePayment({ discountCode: "FREE" });
-      toast.success("100% discount applied!");
-    } else if (couponInput) {
-      toast.error("Invalid coupon code");
-      setDiscount(0);
+    if (applied) return;
+
+    const code = coupon.trim().toUpperCase();
+
+    if (coupons[code]) {
+      const discountValue = coupons[code];
+      setDiscount(discountValue);
+      setPrice(basePrice - discountValue);
+
+      setSuccess("Coupon applied successfully");
+      setError("");
+      setApplied(true);
+      updatePayment({ discountCode: code });
+    } else {
+      setError("Invalid coupon code");
+      setSuccess("");
     }
   };
 
-  const finalPrice = Math.max(0, basePrice * (1 - discount));
-  const eventTitle = lang === "hr" ? event?.translations?.hr?.title || event?.title : event?.translations?.en?.title || event?.title;
-  const eventDateStr = event?.date ? new Date(event.date).toLocaleDateString(lang === "hr" ? "hr-HR" : "en-US") : "";
+  const eventTitle = locale === "hr" ? event?.translations?.hr?.title || event?.title : event?.translations?.en?.title || event?.title;
+  const eventDateStr = event?.date ? new Date(event.date).toLocaleDateString(locale === "hr" ? "hr-HR" : "en-US") : "";
 
   if (!eventId) {
     return (
@@ -53,8 +78,8 @@ export default function ApplySidebar() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
           <Ticket className="h-8 w-8 text-white/20" />
         </div>
-        <h3 className="font-serif text-xl text-white/40">{t.apply.emptyEvent.title}</h3>
-        <p className="mt-2 text-sm text-white/20">{t.apply.emptyEvent.description}</p>
+        <h3 className="font-serif text-xl text-white/40">{t('emptyEvent.title')}</h3>
+        <p className="mt-2 text-sm text-white/20">{t('emptyEvent.description')}</p>
       </aside>
     );
   }
@@ -83,7 +108,7 @@ export default function ApplySidebar() {
           {/* Title Overlay */}
           <div className="absolute bottom-5 left-5">
             <h2 className="font-sans text-[18px] font-semibold text-white tracking-tight drop-shadow-lg">
-              {eventTitle || "Event 11 English"}
+              {eventTitle}
             </h2>
           </div>
         </div>
@@ -95,37 +120,62 @@ export default function ApplySidebar() {
         <div className="flex items-center gap-2.5 text-white/80">
            <Calendar className="h-4 w-4 text-[#D4AF37]" />
            <span className="text-[14px] font-medium text-white/90">
-             12/09/2026 19:00h
+             {eventDateStr} {event?.time}h
            </span>
         </div>
 
         {/* Row 2: Price Details */}
-        <div className="flex items-center justify-between pt-2">
-           <span className="text-[14px] text-white/70">
-             Price for gentlemen
-           </span>
-           <span className="text-[16px] font-bold text-[#F6E27A] [text-shadow:0_0_10px_rgba(201,166,70,0.3)]">
-             2 EUR
-           </span>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between pt-2">
+             <span className="text-[14px] text-white/70">
+               {role === 'lady' ? t('sidebar.priceLady') : t('sidebar.priceGent')}
+             </span>
+             <span className="text-[20px] font-bold text-[#F6E27A] [text-shadow:0_0_10px_rgba(201,166,70,0.3)]">
+               {price} EUR
+             </span>
+          </div>
+          {discount > 0 && (
+            <div className="flex justify-end text-sm text-green-400 font-medium">
+              Discount: -{discount} EUR
+            </div>
+          )}
         </div>
 
         {/* Coupon Section (Refined Style) */}
-        <div className="flex items-center gap-3 mt-4">
-          <div className="flex-1 h-11 flex items-center rounded-[10px] bg-white/[0.05] px-4 border border-white/10 backdrop-blur-md">
-            <input
-              value={couponInput}
-              onChange={(e) => setCouponInput(e.target.value)}
-              placeholder="Enter coupon code"
-              className="w-full bg-transparent text-[13px] font-medium text-white/70 focus:outline-none placeholder:text-white/20"
-            />
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-11 flex items-center rounded-[10px] bg-white/[0.05] px-4 border border-white/10 backdrop-blur-md">
+              <input
+                value={coupon}
+                onChange={(e) => {
+                  setCoupon(e.target.value);
+                  setError("");
+                }}
+                disabled={applied}
+                placeholder={t('sidebar.couponPlaceholder')}
+                className="w-full bg-transparent text-[13px] font-medium text-white/70 focus:outline-none placeholder:text-white/20 disabled:opacity-50"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleApplyCoupon}
+              disabled={applied || !coupon}
+              className="h-11 rounded-[10px] border border-white/20 bg-transparent px-6 text-[14px] font-medium text-white transition-all hover:bg-white/5 hover:border-white/40 active:scale-95 whitespace-nowrap disabled:opacity-50 disabled:active:scale-100"
+            >
+              {applied ? "Applied" : t('sidebar.couponBtn')}
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleApplyCoupon}
-            className="h-11 rounded-[10px] border border-white/20 bg-transparent px-6 text-[14px] font-medium text-white transition-all hover:bg-white/5 hover:border-white/40 active:scale-95 whitespace-nowrap"
-          >
-            Accept
-          </button>
+
+          {error && (
+            <div className="rounded-lg px-4 py-2 text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="rounded-lg px-4 py-2 text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
+              {success}
+            </div>
+          )}
         </div>
       </div>
     </aside>

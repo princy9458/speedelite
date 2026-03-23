@@ -5,8 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Loader2, Calendar, Clock, Users, Euro, Image as ImageIcon, CheckCircle, Globe, Layout, ShieldCheck } from "lucide-react";
+import { useRouter } from "@/i18n/routing";
+import { Loader2, Calendar, Clock, Users, Euro, Image as ImageIcon, CheckCircle, ShieldCheck } from "lucide-react";
 import DateTimePicker from "@/components/admin/form/DateTimePicker";
 import PremiumSelect from "@/components/admin/form/PremiumSelect";
 import TimePicker from "@/components/admin/form/TimePicker";
@@ -16,6 +16,7 @@ import Badge from "@/components/admin/Badge";
 import Card from "@/components/admin/Card";
 import Tabs from "@/components/admin/Tabs";
 import { cn } from "@/lib/utils";
+import { useTranslations, useLocale } from "next-intl";
 
 const combineEventDateTime = (date?: string, time?: string) => {
   if (!date || !time) return null;
@@ -66,65 +67,6 @@ const toDateTimeFieldValue = (value: Date) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-const eventFormSchema = z
-  .object({
-    title: z.string().optional().default(""),
-    location: z.string().optional().default(""),
-    description: z.string().optional().default(""),
-    date: z.string().min(1, "Event date is required"),
-    time: z.string().min(1, "Event time is required"),
-    capacity: z.coerce.number().int().min(1, "Capacity is required"),
-    priceMale: z.coerce.number().min(0, "Price male is required"),
-    priceFemale: z.coerce.number().min(0, "Price female is required"),
-    bookingDeadline: z.string().min(1, "Booking date time is required"),
-    featuredImage: z.string().optional().default(""),
-    status: z.enum(["draft", "published"]).default("draft"),
-    language: z.string().optional().default("en"),
-    translations: z.object({
-      en: z.object({
-        title: z.string().min(2, "English title is required"),
-        description: z.string().optional().default(""),
-        location: z.string().min(2, "English location is required"),
-      }),
-      hr: z.object({
-        title: z.string().optional().default(""),
-        description: z.string().optional().default(""),
-        location: z.string().optional().default(""),
-      }),
-    }),
-  })
-  .superRefine((values, ctx) => {
-    const eventStart = combineEventDateTime(values.date, values.time);
-    const deadline = parseDateTimeValue(values.bookingDeadline);
-    const now = new Date();
-
-    if (!eventStart || eventStart <= now) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["date"],
-        message: "Event date cannot be in the past",
-      });
-    }
-
-    if (deadline && deadline <= now) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["bookingDeadline"],
-        message: "Booking deadline cannot be in the past",
-      });
-    }
-
-    if (eventStart && deadline && deadline >= eventStart) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["bookingDeadline"],
-        message: "Booking must close before event starts",
-      });
-    }
-  });
-
-type EventFormValues = z.infer<typeof eventFormSchema>;
-
 type EventFormProps = {
   initialData?: any;
   eventId?: string;
@@ -147,9 +89,70 @@ const formatDateTime = (value: string | Date) => {
 
 export default function EventForm({ initialData, eventId }: EventFormProps) {
   const router = useRouter();
+  const t = useTranslations('admin.eventForm');
+  const locale = useLocale();
   const [activeLanguage, setActiveLanguage] = useState<string>("en");
   const [appliedSuggestion, setAppliedSuggestion] = useState(false);
-  const formMode = eventId ? "Update" : "Create";
+  const formMode = eventId ? t('updateEvent') : t('createEvent');
+
+  const eventFormSchema = useMemo(() => z
+    .object({
+      title: z.string().optional().default(""),
+      location: z.string().optional().default(""),
+      description: z.string().optional().default(""),
+      date: z.string().min(1, t('validation.dateRequired')),
+      time: z.string().min(1, t('validation.timeRequired')),
+      capacity: z.coerce.number().int().min(1, t('validation.capacityRequired')),
+      priceMale: z.coerce.number().min(0, t('validation.priceMaleRequired')),
+      priceFemale: z.coerce.number().min(0, t('validation.priceFemaleRequired')),
+      bookingDeadline: z.string().min(1, t('validation.deadlineRequired')),
+      featuredImage: z.string().optional().default(""),
+      status: z.enum(["draft", "published"]).default("draft"),
+      language: z.string().optional().default("en"),
+      translations: z.object({
+        en: z.object({
+          title: z.string().min(2, t('validation.titleEnRequired')),
+          description: z.string().optional().default(""),
+          location: z.string().min(2, t('validation.locationEnRequired')),
+        }),
+        hr: z.object({
+          title: z.string().optional().default(""),
+          description: z.string().optional().default(""),
+          location: z.string().optional().default(""),
+        }),
+      }),
+    })
+    .superRefine((values, ctx) => {
+      const eventStart = combineEventDateTime(values.date, values.time);
+      const deadline = parseDateTimeValue(values.bookingDeadline);
+      const now = new Date();
+
+      if (!eventStart || eventStart <= now) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["date"],
+          message: t('validation.datePast'),
+        });
+      }
+
+      if (deadline && deadline <= now) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["bookingDeadline"],
+          message: t('validation.deadlinePast'),
+        });
+      }
+
+      if (eventStart && deadline && deadline >= eventStart) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["bookingDeadline"],
+          message: t('validation.deadlineAfterStart'),
+        });
+      }
+    }), [t]);
+
+  type EventFormValues = z.infer<typeof eventFormSchema>;
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -215,14 +218,14 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
       });
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data?.error?.formErrors?.[0] || "Failed to save event");
+        toast.error(data?.error?.formErrors?.[0] || t('errorGeneric'));
         return;
       }
-      toast.success(eventId ? "Event updated" : "Event created");
+      toast.success(eventId ? t('updateSuccess') : t('saveSuccess'));
       router.refresh();
       router.push("/admin/events");
     } catch {
-      toast.error("Something went wrong");
+      toast.error(t('errorGeneric'));
     }
   };
 
@@ -232,7 +235,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Badge label={`${formMode} Mode`} variant="info" />
+          <Badge label={formMode} variant="info" />
           {form.watch("status") === 'published' ? (
             <Badge label="Live" variant="success" />
           ) : (
@@ -245,7 +248,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
             onClick={() => router.push("/admin/events")}
             className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white transition-colors"
           >
-            Cancel
+            {t('cancel')}
           </button>
           <button
             type="submit"
@@ -253,17 +256,16 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
             className="inline-flex items-center gap-2 bg-white text-black px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-white/5"
           >
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-            {eventId ? "Update Event" : "Create Event"}
+            {eventId ? t('updateEvent') : t('createEvent')}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-8">
           <Card 
-            title="Editorial Content" 
-            description="Manage multi-lingual presentation and storytelling"
+            title={t('editorialContent')} 
+            description={t('editorialDesc')}
             headerAction={
               <Tabs 
                 options={[
@@ -279,11 +281,11 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
-                    Event Title ({activeLanguage.toUpperCase()})
+                    {t('eventTitle')} ({activeLanguage.toUpperCase()})
                   </label>
                   <input
                     {...form.register(`translations.${langKey}.title` as const)}
-                    placeholder="e.g. Elite Black Tie Soirée"
+                    placeholder={t('placeholders.title')}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-white/20 transition-all outline-none"
                   />
                   {errors.translations?.[langKey]?.title && (
@@ -292,11 +294,11 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
-                    Location ({activeLanguage.toUpperCase()})
+                    {t('location')} ({activeLanguage.toUpperCase()})
                   </label>
                   <input
                     {...form.register(`translations.${langKey}.location` as const)}
-                    placeholder="e.g. Hotel Esplanade, Zagreb"
+                    placeholder={t('placeholders.location')}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-white/20 transition-all outline-none"
                   />
                   {errors.translations?.[langKey]?.location && (
@@ -306,7 +308,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
-                  Atmosphere Description
+                  {t('atmosphereDesc')}
                 </label>
                 <div className="rounded-xl border border-white/10 bg-white/[0.01] overflow-hidden">
                   <Controller
@@ -321,12 +323,12 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
             </div>
           </Card>
 
-          <Card title="Scheduling & Logistics" description="Define the event timeline and capacity">
+          <Card title={t('schedulingLogistics')} description={t('schedulingDesc')}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                   <Calendar className="h-3 w-3 text-white/40" />
-                  Event Date
+                  {t('eventDate')}
                 </label>
                 <Controller
                   control={form.control}
@@ -336,7 +338,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                       mode="date"
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder="Select date"
+                      placeholder={t('placeholders.date')}
                       disablePast
                     />
                   )}
@@ -346,7 +348,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                   <Clock className="h-3 w-3 text-white/40" />
-                  Event Time
+                  {t('eventTime')}
                 </label>
                 <Controller
                   control={form.control}
@@ -358,7 +360,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                   <Users className="h-3 w-3 text-white/40" />
-                  Capacity (Guests)
+                  {t('capacity')}
                 </label>
                 <input
                   type="number"
@@ -371,7 +373,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                   <ShieldCheck className="h-3 w-3 text-rose-400/60" />
-                  Booking Deadline
+                  {t('bookingDeadline')}
                 </label>
                 <Controller
                   control={form.control}
@@ -382,7 +384,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                         mode="datetime"
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder="Booking close time"
+                        placeholder={t('placeholders.deadline')}
                         disablePast
                         maxDateTime={eventStart ? new Date(eventStart.getTime() - 60 * 1000) : null}
                       />
@@ -400,7 +402,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                               : "border-white/10 text-white/30 hover:border-white/20 hover:text-white/50"
                           )}
                         >
-                          {appliedSuggestion ? "Suggestion Applied" : "Use Suggested Timing"}
+                          {appliedSuggestion ? t('suggestionApplied') : t('useSuggested')}
                         </button>
                       )}
                     </div>
@@ -412,12 +414,11 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
           </Card>
         </div>
 
-        {/* Sidebar Column */}
         <div className="space-y-8 lg:sticky lg:top-10 self-start">
-          <Card title="Publishing Status">
+          <Card title={t('publishingStatus')}>
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">Status</label>
+                <label className="text-xs font-bold text-white/30 uppercase tracking-widest pl-1">{t('status')}</label>
                 <Controller
                   control={form.control}
                   name="status"
@@ -425,10 +426,10 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                     <PremiumSelect
                       value={field.value}
                       onChange={(val) => field.onChange(val)}
-                      placeholder="Select status"
+                      placeholder={t('status')}
                       options={[
-                        { label: "Draft - Preview Only", value: "draft" },
-                        { label: "Published - Live", value: "published" },
+                        { label: t('draftPreview'), value: "draft" },
+                        { label: t('publishedLive'), value: "published" },
                       ]}
                     />
                   )}
@@ -437,18 +438,18 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
                 <p className="text-xs leading-relaxed text-white/40">
-                  Published events are immediately visible to members for booking. Ensure all translations are complete.
+                  {t('statusDesc')}
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card title="Monetization">
+          <Card title={t('monetization')}>
             <div className="space-y-6">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                   <Euro className="h-3 w-3 text-sky-400/60" />
-                  Male Price
+                  {t('malePrice')}
                 </label>
                 <div className="relative">
                   <input
@@ -463,7 +464,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                   <Euro className="h-3 w-3 text-rose-400/60" />
-                  Female Price
+                  {t('femalePrice')}
                 </label>
                 <div className="relative">
                   <input
@@ -478,11 +479,11 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
             </div>
           </Card>
 
-          <Card title="Visual Assets">
+          <Card title={t('visualAssets')}>
             <div className="space-y-4">
               <label className="flex items-center gap-2 text-xs font-bold text-white/30 uppercase tracking-widest pl-1">
                 <ImageIcon className="h-3 w-3 text-white/40" />
-                Featured Image
+                {t('featuredImage')}
               </label>
               <Controller
                 control={form.control}
@@ -491,7 +492,7 @@ export default function EventForm({ initialData, eventId }: EventFormProps) {
                   <div className="space-y-4">
                     <ImageUploader value={field.value} onChange={field.onChange} />
                     <input
-                      placeholder="Or paste image URL"
+                      placeholder={t('imagePlaceholder')}
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs outline-none focus:ring-1 focus:ring-white/20 transition-all"
