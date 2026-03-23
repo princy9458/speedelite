@@ -49,7 +49,7 @@ type PaymentData = {
 };
 
 type BookingState = {
-  role: "lady" | "gent" | null;
+  role: "lady" | "gentleman" | null;
   lang: "en" | "hr";
   eventId: string | null;
   formData: BookingFormData;
@@ -61,7 +61,7 @@ type BookingState = {
     time: string;
     timezone: string;
   } | null;
-  setRole: (role: "lady" | "gent") => void;
+  setRole: (role: "lady" | "gentleman") => void;
   setLang: (lang: "en" | "hr") => void;
   setEventId: (eventId: string) => void;
   updateForm: (data: Partial<BookingFormData>) => void;

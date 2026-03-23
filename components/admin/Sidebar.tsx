@@ -1,23 +1,23 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, usePathname } from '@/i18n/routing';
 import { CalendarDays, LayoutDashboard, TicketCheck, Users, BadgePercent, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminUiStore } from '@/lib/stores/adminUi';
-import { getDictionary } from '@/lib/i18n';
+import { useTranslations } from 'next-intl';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { sidebarOpen, closeSidebar, lang } = useAdminUiStore();
-  const t = getDictionary(lang).admin;
+  const { sidebarOpen, closeSidebar } = useAdminUiStore();
+  const t = useTranslations('admin');
+  
   const navItems = [
-    { label: t.nav.dashboard, href: '/admin', icon: LayoutDashboard },
-    { label: t.nav.events, href: '/admin/events', icon: CalendarDays },
-    { label: t.nav.bookings, href: '/admin/bookings', icon: TicketCheck },
-    { label: t.nav.customers, href: '/admin/customers', icon: Users },
-    { label: t.nav.coupons, href: '/admin/coupons', icon: BadgePercent },
-    { label: t.nav.analytics, href: '/admin/analytics', icon: BarChart3 },
+    { label: t('nav.dashboard'), href: '/admin', icon: LayoutDashboard },
+    { label: t('nav.events'), href: '/admin/events', icon: CalendarDays },
+    { label: t('nav.bookings'), href: '/admin/bookings', icon: TicketCheck },
+    { label: t('nav.customers'), href: '/admin/customers', icon: Users },
+    { label: t('nav.coupons'), href: '/admin/coupons', icon: BadgePercent },
+    { label: t('nav.analytics'), href: '/admin/analytics', icon: BarChart3 },
   ];
 
   return (
@@ -36,7 +36,7 @@ export default function Sidebar() {
         )}
       >
         <div className="flex items-center gap-3 text-2xl font-serif gold-text mb-10">
-          {t.panel}
+          {t('panel')}
         </div>
         <nav className="flex flex-col gap-2">
           {navItems.map((item) => {
@@ -64,7 +64,7 @@ export default function Sidebar() {
             href="/"
             className="block rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 hover:text-white hover:border-white/30 transition-colors"
           >
-            {t.backToSite}
+            {t('backToSite')}
           </Link>
         </div>
       </aside>
