@@ -140,82 +140,91 @@ export default function PaymentPage() {
 
   if (view === "success") {
     return (
-      <div className="mx-auto max-w-[1240px] space-y-12 pb-20">
+      <div className="mx-auto max-w-[1240px] px-6 pb-20 space-y-12">
         <ProgressSteps steps={t.apply.steps} currentStep={3} />
         
-        <div className="space-y-4 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#d4af37]/10 text-[#d4af37] shadow-[0_0_30px_rgba(212,175,55,0.1)]">
-            <Check className="h-10 w-10 stroke-[3px]" />
-          </div>
-          <h1 className="text-4xl font-serif text-white">{lang === "hr" ? "Plaćanje uspješno" : "Payment Successful"}</h1>
-          <p className="text-white/60">
-            {lang === "hr" ? "Uplata je uspješno izvršena. Još jedan korak do završetka prijave." : "Payment has been processed successfully. One more step to complete your application."}
+        {/* Header Section (Left Aligned) */}
+        <div className="space-y-3">
+          <h1 className="text-[32px] font-bold text-white tracking-tight">{lang === "hr" ? "Plaćanje uspješno" : "Payment successful"}</h1>
+          <p className="text-[15px] text-white/70 max-w-2xl leading-relaxed">
+            {lang === "hr" ? "Uplata je uspješno izvršena. Još jedan korak do završetka prijave." : "Payment has been successfully made. One more step to complete your registration."}
           </p>
         </div>
 
-        <div className="mx-auto max-w-[900px]">
-          <div className="overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl">
-            <div className="grid md:grid-cols-[1fr_1.2fr]">
-              {/* Left Side: Event Block */}
-              <div className="relative aspect-square md:aspect-auto">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-                {event?.featuredImage && (
-                  <Image
-                    src={event.featuredImage}
-                    alt={eventTitle}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-                <div className="absolute bottom-8 left-8 z-20">
-                  <h2 className="font-serif text-4xl font-bold text-white mb-4">{eventTitle}</h2>
-                  <div className="flex items-center gap-2 text-[#d4af37]">
-                    <Calendar className="h-5 w-5" />
-                    <span className="text-lg font-medium">{eventDateStr} {event?.time}h</span>
+        <div className="max-w-[840px]">
+          {/* Main Success Card */}
+          <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-[#16130D]/60 backdrop-blur-xl shadow-2xl p-6">
+            <div className="flex flex-col md:flex-row gap-8 items-stretch">
+              {/* LEFT side: Event Card */}
+              <div className="w-full md:w-[340px] space-y-4">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[16px] shadow-lg">
+                  {event?.featuredImage && (
+                    <Image
+                      src={event.featuredImage}
+                      alt={eventTitle}
+                      fill
+                      className="object-cover"
+                    />
+                  )}
+                  {/* Image Overlays */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-4 left-4">
+                    <h2 className="text-[20px] font-bold text-white">Event 11</h2>
                   </div>
+                </div>
+                {/* Date under image */}
+                <div className="flex items-center gap-2.5 text-white/60">
+                  <Calendar className="h-4 w-4 text-[#E7C873]" />
+                  <span className="text-[14px] font-medium">12/09/2026 19:00</span>
                 </div>
               </div>
 
-              {/* Right Side: Details Block */}
-              <div className="p-10 space-y-8">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between text-white/50">
-                    <span className="text-sm uppercase tracking-widest">{lang === "hr" ? "Kod za popust" : "Coupon Code"}</span>
-                    <span className="text-sm">{paymentData.discountCode || "N/A"}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-white/90">
-                      <Ticket className="h-5 w-5 text-[#d4af37]" />
-                      <span className="text-sm font-medium uppercase tracking-widest text-[#d4af37]">{lang === "hr" ? "Popust" : "Discount"}</span>
-                    </div>
-                    <span className="text-xl font-bold text-[#d4af37]">-{basePrice - finalPrice} EUR</span>
-                  </div>
+              {/* RIGHT side: Payment Details */}
+              <div className="flex-1 flex flex-col justify-center space-y-5">
+                {/* Date Row */}
+                <div className="flex items-center gap-2.5 text-white/90">
+                  <Calendar className="h-4 w-4 text-[#E7C873]" />
+                  <span className="text-[14px] font-medium">12/09/2026 19:00h</span>
                 </div>
 
-                <div className="h-px w-full bg-white/10" />
-
-                <div className="space-y-6">
+                {/* Rows Area */}
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-serif font-bold text-white">Total</span>
-                    <span className="text-2xl font-serif font-bold text-white">{finalPrice} EUR</span>
+                    <span className="text-[13px] font-medium text-white/50">{lang === "hr" ? "Kod za popust:" : "Discount code:"}</span>
+                    <span className="text-[14px] font-semibold text-white uppercase tracking-wider">ON</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                       <Ticket className="h-4 w-4 text-[#E7C873]" />
+                       <span className="text-[13px] font-medium text-white/50">{lang === "hr" ? "Popust" : "Discount"}</span>
+                    </div>
+                    <span className="text-[14px] font-bold text-[#E7C873]">--1.00 EUR</span>
+                  </div>
+
+                  <div className="h-[1px] w-full bg-white/10" />
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[16px] font-bold text-white">Total</span>
+                    <span className="text-[16px] font-bold text-white">2.00 EUR</span>
                   </div>
                   
-                  <div className="flex items-center justify-between text-white/50">
-                    <span className="text-sm uppercase tracking-widest">{lang === "hr" ? "Plaćanje" : "Payment"}</span>
-                    <span className="text-sm">Simulated *{paymentData.cardNumber.slice(-4)}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-white/40">{lang === "hr" ? "Plaćanje" : "Payment"}</span>
+                    <span className="text-[13px] text-white/40 italic">Simulated *{paymentData.cardNumber.slice(-4) || "4242"}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-12 flex justify-center">
+          {/* Bottom Right Button */}
+          <div className="mt-8 flex justify-end">
              <button
                 onClick={() => router.push("/apply/verification")}
-                className="gold-gradient rounded-full px-16 py-4 text-xs font-bold uppercase tracking-[0.25em] text-black shadow-[0_16px_36px_rgba(212,175,55,0.3)] transition-all hover:brightness-110 active:scale-[0.98]"
+                className="bg-[linear-gradient(135deg,#E7C873,#F6E27A)] rounded-full px-8 py-3 text-[14px] font-bold text-black shadow-[0_12px_24px_rgba(231,200,115,0.25)] transition-all hover:brightness-105 active:scale-[0.98]"
              >
-                {lang === "hr" ? "Sljedeći korak" : "Next Step"}
+                {lang === "hr" ? "Sljedeći korak" : "Next step"}
              </button>
           </div>
         </div>

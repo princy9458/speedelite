@@ -102,7 +102,7 @@ export default function ApplySidebar() {
         {/* Row 2: Price Details */}
         <div className="flex items-center justify-between pt-2">
            <span className="text-[14px] text-white/70">
-             Price for Gentlemen
+             Price for gentlemen
            </span>
            <span className="text-[16px] font-bold text-[#F6E27A] [text-shadow:0_0_10px_rgba(201,166,70,0.3)]">
              2 EUR
@@ -111,7 +111,7 @@ export default function ApplySidebar() {
 
         {/* Coupon Section (Refined Style) */}
         <div className="flex items-center gap-3 mt-4">
-          <div className="flex-1 rounded-[10px] bg-white/[0.05] p-3 border border-white/5 backdrop-blur-md">
+          <div className="flex-1 h-11 flex items-center rounded-[10px] bg-white/[0.05] px-4 border border-white/10 backdrop-blur-md">
             <input
               value={couponInput}
               onChange={(e) => setCouponInput(e.target.value)}
@@ -122,9 +122,9 @@ export default function ApplySidebar() {
           <button
             type="button"
             onClick={handleApplyCoupon}
-            className="rounded-[10px] border border-white/20 bg-transparent px-6 py-3 text-[12px] font-bold uppercase tracking-widest text-white transition hover:bg-white/5 hover:border-white/40 active:scale-95 whitespace-nowrap"
+            className="h-11 rounded-[10px] border border-white/20 bg-transparent px-6 text-[14px] font-medium text-white transition-all hover:bg-white/5 hover:border-white/40 active:scale-95 whitespace-nowrap"
           >
-            Apply
+            Accept
           </button>
         </div>
       </div>

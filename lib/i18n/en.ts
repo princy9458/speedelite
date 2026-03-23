@@ -101,7 +101,7 @@ export const en = {
     },
   },
   apply: {
-    steps: ["Event", "Form", "Reservation", "Verification", "Completion"],
+    steps: ["Term", "Form", "Reservation", "Verification", "Completion"],
     formTitle: "Application Form",
     stepLabel: "Step 2",
     eventSummaryTitle: "Selected Event",
