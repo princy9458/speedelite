@@ -1,20 +1,47 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 💛 SpeedElite
 
-# Run and deploy your AI Studio app
+A modern speed dating web application with multi-step application flow, internationalization (i18n), and premium UI design.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/201a24e8-0533-495d-bbc2-9dbf1ce0d178
+## 🚀 Features
 
-## Run Locally
+- 🌐 Multi-language support (i18n)
+- 🧾 Multi-step apply flow (Event → Form → Reservation → Verification → Completion)
+- 🎯 Event selection system
+- 🎨 Premium UI/UX design (gold theme)
+- 🧩 Reusable components
+- 💳 Coupon system (discount handling)
+- 📱 Responsive layout
 
-**Prerequisites:**  Node.js
+---
+
+## 🛠️ Tech Stack
+
+- Next.js
+- React
+- Tailwind CSS
+- next-intl (i18n)
+- Node.js
+
+---
+
+## 📂 Project Structure
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+app/
+components/
+lib/
+public/
+messages/
+
+
+---
+
+## ⚙️ Setup Instructions
+
+```bash
+git clone https://github.com/princy9458/speedelite.git
+cd speedelite
+npm install
+npm run dev
