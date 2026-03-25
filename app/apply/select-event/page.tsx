@@ -17,7 +17,8 @@ function SelectEventContent() {
   const t = getDictionary(lang);
 
   useEffect(() => {
-    const r = searchParams.get("role") === "gent" ? "gent" : "lady";
+    const roleParam = searchParams.get("role");
+    const r: "lady" | "gentleman" = roleParam === "gentleman" ? "gentleman" : "lady";
     const l = searchParams.get("lang") === "hr" ? "hr" : "en";
     if (r) setRole(r);
     if (l) setLang(l);

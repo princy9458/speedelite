@@ -20,7 +20,8 @@ function SelectEventContent() {
 
   useEffect(() => {
     // Role is still coming from query param initially from landing page
-    const r = searchParams.get("role") === "gentleman" ? "gentleman" : "lady";
+    const roleParam = searchParams.get("role");
+    const r: "lady" | "gentleman" = roleParam === "gentleman" ? "gentleman" : "lady";
     if (r) setRole(r);
 
     fetch("/api/events?limit=100&status=published")

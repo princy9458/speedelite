@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -416,11 +416,12 @@ const Hero = ({ t, onApply }: any) => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button 
-              onClick={() => onApply('gent')}
+              onClick={() => onApply('gentleman')}
               className="gold-gradient text-black font-bold py-3.5 px-8 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all text-sm uppercase tracking-wider"
             >
               {t.hero.btnGent}
             </button>
+
             <button 
               onClick={() => onApply('lady')}
               className="bg-transparent border border-white text-white font-bold py-3.5 px-8 rounded-lg flex items-center justify-center gap-2 hover:bg-white/10 transition-all text-sm uppercase tracking-wider"
@@ -786,11 +787,12 @@ const Benefits = ({ t, onApply }: any) => (
             ))}
           </ul>
           <button 
-            onClick={() => onApply('gent')}
+            onClick={() => onApply('gentleman')}
             className="gold-gradient text-black font-bold py-5 px-12 rounded-xl w-full md:w-fit text-sm uppercase tracking-widest hover:scale-105 transition-transform shadow-lg"
           >
             {t.hero.btnGent}
           </button>
+
         </motion.div>
       </div>
       
@@ -828,11 +830,12 @@ const Footer = ({ t, onApply }: any) => (
           </div>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <button 
-              onClick={() => onApply('gent')}
+              onClick={() => onApply('gentleman')}
               className="gold-gradient text-black font-bold py-3 px-6 rounded-lg text-xs uppercase tracking-widest"
             >
               {t.hero.btnGent}
             </button>
+
             <button 
               onClick={() => onApply('lady')}
               className="border border-white/20 text-white font-bold py-3 px-6 rounded-lg text-xs uppercase tracking-widest hover:bg-white/5"
@@ -885,9 +888,10 @@ export default function App() {
   const [lang, setLang] = React.useState<'hr' | 'en'>('hr');
   const t = translations[lang];
 
-  const startBooking = (role: 'lady' | 'gent') => {
+  const startBooking = (role: 'lady' | 'gentleman') => {
     router.push(`/apply/select-event?role=${role}&lang=${lang}`);
   };
+
 
   return (
     <div className="min-h-screen font-sans selection:bg-[#F4D693] selection:text-black">

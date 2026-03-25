@@ -4,7 +4,11 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-const Benefits = () => {
+interface BenefitsProps {
+  onApply: (role: 'lady' | 'gentleman') => void;
+}
+
+const Benefits = ({ onApply }: BenefitsProps) => {
   const t = useTranslations('landing.benefits');
   return (
     <section className="py-32 relative overflow-hidden">
@@ -23,6 +27,12 @@ const Benefits = () => {
                 <li key={key} className="text-xl text-white/70 leading-relaxed font-sans pb-8 border-b border-white/5 last:border-0 hover:text-white transition-colors">{t(key)}</li>
               ))}
             </ul>
+            <button 
+              onClick={() => onApply('lady')}
+              className="gold-gradient text-black font-bold py-5 px-12 rounded-xl w-full md:w-fit text-sm uppercase tracking-widest hover:scale-105 transition-transform shadow-lg mt-10"
+            >
+              Apply as a Lady
+            </button>
           </div>
 
           {/* Him */}
@@ -36,6 +46,12 @@ const Benefits = () => {
                 <li key={key} className="text-xl text-white/70 leading-relaxed font-sans pb-8 border-b border-white/5 last:border-0 hover:text-white transition-colors">{t(key)}</li>
               ))}
             </ul>
+            <button 
+              onClick={() => onApply('gentleman')}
+              className="gold-gradient text-black font-bold py-5 px-12 rounded-xl w-full md:w-fit text-sm uppercase tracking-widest hover:scale-105 transition-transform shadow-lg mt-10"
+            >
+              Apply as a Gentleman
+            </button>
           </div>
         </div>
         <p className="text-center mt-16 text-white/40 italic text-lg max-w-2xl mx-auto">{t('note')}</p>

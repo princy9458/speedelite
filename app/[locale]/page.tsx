@@ -17,9 +17,10 @@ import Benefits from '@/components/landing/Benefits';
 export default function LandingPage() {
   const router = useRouter();
 
-  const startBooking = (role: string) => {
+  const startBooking = (role: 'lady' | 'gentleman') => {
     router.push(`/apply/select-event?role=${role}`);
   };
+
 
   return (
     <div className="min-h-screen font-sans selection:bg-[#F4D693] selection:text-black">
@@ -33,7 +34,8 @@ export default function LandingPage() {
         <VideoSection />
         <Testimonials />
         <Gallery />
-        <Benefits />
+        <Benefits onApply={startBooking} />
+
       </main>
       <Footer onApply={startBooking} />
     </div>
