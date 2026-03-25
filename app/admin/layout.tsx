@@ -1,5 +1,6 @@
-import AdminShell from '@/components/admin/AdminShell';
+import { redirect } from 'next/navigation';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <AdminShell>{children}</AdminShell>;
+export default function RootAdminLayout({ children }: { children: React.ReactNode }) {
+  redirect('/en/admin'); // Default redirect to localized version
+  return <>{children}</>;
 }

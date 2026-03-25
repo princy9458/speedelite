@@ -27,8 +27,9 @@ export default function AnalyticsAdmin() {
   const eventStats = events.map((event) => {
     const eventBookings = bookings.filter((b) => b.event?._id === event._id);
     const revenue = eventBookings.reduce((acc, curr) => acc + (curr.amountPaid || 0), 0);
-    const maleBookings = eventBookings.filter((b) => b.user?.gender === 'gent').length;
+    const maleBookings = eventBookings.filter((b) => b.user?.gender === 'gentleman').length;
     const femaleBookings = eventBookings.filter((b) => b.user?.gender === 'lady').length;
+
 
     return {
       ...event,
